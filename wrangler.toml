@@ -11,4 +11,4 @@ not_found_handling = "single-page-application"
 # then paste the id it prints below.
 [[kv_namespaces]]
 binding = "EQ_KV"
-id = "PASTE_KV_NAMESPACE_ID_HERE"
+id = "ca998e35ce574904ad062927d689900e"
