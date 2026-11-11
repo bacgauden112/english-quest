@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English Quest — Tự học tiếng Anh</title>
+<meta name="theme-color" content="#7C5CFF">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap&subset=vietnamese" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F2FF; --card:#FFFFFF; --ink:#1F1B3A; --muted:#6E6A8A; --line:#E6E2F7;
+  --violet:#7C5CFF; --violet-d:#5A3EE0; --green:#22C55E; --green-d:#16A34A;
+  --gold:#FFB020; --gold-d:#E08E00; --flame:#FF6B2C; --red:#F43F5E; --red-d:#D61F45;
+  --sky:#2DB7F5; --sky-d:#1494D1; --grey:#D9D6EA; --grey-d:#B9B5D0;
+  --r:20px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-weight:700}
+button,input,select,textarea{font-family:inherit;font-weight:700;color:inherit}
+a{color:var(--violet-d)}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 110px}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:rgba(244,242,255,.92);backdrop-filter:blur(8px);border-bottom:2px solid var(--line)}
+.top-in{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.brand{font-weight:900;font-size:18px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px;margin-right:auto}
+.brand .logo{width:34px;height:34px}
+.stat{display:flex;align-items:center;gap:5px;font-weight:900;font-size:16px;padding:6px 10px;border-radius:999px;background:var(--card);border:2px solid var(--line)}
+.stat.flame{color:var(--flame)} .stat.xp{color:var(--violet-d)}
+.stat.off{filter:grayscale(1);opacity:.6}
+.ring{width:38px;height:38px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-weight:900;color:var(--green-d)}
+.iconbtn{background:none;border:none;cursor:pointer;padding:6px;border-radius:12px;color:var(--muted)}
+.iconbtn:hover{background:var(--line)}
+.save{font-size:11px;color:var(--muted);text-align:center;padding:2px 0 0}
+/* bottom nav */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--card);border-top:2px solid var(--line)}
+.nav-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.nav a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 12px;text-decoration:none;color:var(--muted);font-size:12px;font-weight:800;border-top:3px solid transparent}
+.nav a svg{width:26px;height:26px}
+.nav a.on{color:var(--violet-d);border-top-color:var(--violet)}
+/* cards */
+.card{background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h2{margin:0 0 6px;font-size:20px;font-weight:900}
+.card h3{margin:0 0 6px;font-size:17px;font-weight:900}
+.muted{color:var(--muted);font-weight:700}
+.small{font-size:13px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+/* chunky buttons */
+.btn{--c:var(--violet);--d:var(--violet-d);border:none;cursor:pointer;background:var(--c);color:#fff;font-weight:900;font-size:16px;letter-spacing:.3px;text-transform:uppercase;padding:13px 20px;border-radius:16px;box-shadow:0 5px 0 var(--d);transform:translateY(0);transition:transform .06s,box-shadow .06s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--d)}
+.btn:disabled{--c:var(--grey);--d:var(--grey-d);cursor:not-allowed;color:#fff}
+.btn.green{--c:var(--green);--d:var(--green-d)} .btn.gold{--c:var(--gold);--d:var(--gold-d)}
+.btn.red{--c:var(--red);--d:var(--red-d)} .btn.sky{--c:var(--sky);--d:var(--sky-d)}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line)}
+.btn.ghost:active{box-shadow:0 0 0 var(--line)}
+.btn.sm{font-size:13px;padding:9px 14px;border-radius:13px;box-shadow:0 4px 0 var(--d)}
+.btn.ghost.sm{box-shadow:0 3px 0 var(--line)}
+.btn.block{width:100%}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:2px solid var(--line);background:var(--card);cursor:pointer;font-size:13px;font-weight:800}
+.chip.on{background:var(--violet);border-color:var(--violet);color:#fff}
+.chip.ngw{font-size:15px;padding:9px 14px;background:#E8FBEF;border-color:#BDF0CF}
+.chip.ngw.unk{background:#FFECEF;border-color:var(--red);color:#A3122F;text-decoration:none}
+input[type=text],input[type=date],input[type=number],input[type=url],select,textarea{width:100%;padding:11px 13px;border:2px solid var(--line);border-radius:14px;background:#FBFAFF;font-size:15px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--violet)}
+textarea{min-height:90px;resize:vertical;font-weight:600;line-height:1.5}
+label.f{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px}
+/* hero */
+.hero{background:linear-gradient(135deg,#7C5CFF,#9B7BFF 55%,#2DB7F5);color:#fff;border:none;position:relative;overflow:hidden}
+.hero .wk{font-size:13px;opacity:.9;font-weight:800;text-transform:uppercase;letter-spacing:.8px}
+.hero h2{font-size:22px;margin:4px 0 8px}
+.hero .topic{display:inline-block;background:rgba(255,255,255,.2);padding:6px 12px;border-radius:999px;font-size:14px}
+.hero .bot{position:absolute;right:6px;top:6px;width:78px;opacity:.95}
+.hero h2,.hero .wk{padding-right:76px}
+.lvl{display:flex;align-items:center;gap:10px;margin-top:14px}
+.lvl .bar{flex:1;height:14px;border-radius:99px;background:rgba(255,255,255,.25);overflow:hidden}
+.lvl .bar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .6s}
+.lvl b{font-size:13px}
+/* path */
+.path{position:relative;padding:10px 0 4px}
+.node{display:flex;align-items:center;gap:16px;margin:0 0 18px;position:relative}
+.node:nth-child(even){flex-direction:row-reverse;text-align:right}
+.bubble{width:78px;height:78px;border-radius:50%;flex:none;display:grid;place-items:center;cursor:pointer;border:none;background:var(--grey);box-shadow:0 7px 0 var(--grey-d);transition:transform .08s;position:relative}
+.bubble svg{width:36px;height:36px;color:#fff}
+.bubble:active{transform:translateY(5px);box-shadow:0 2px 0 var(--grey-d)}
+.node.next .bubble{background:var(--violet);box-shadow:0 7px 0 var(--violet-d);animation:bob 1.6s ease-in-out infinite}
+.node.done .bubble{background:var(--gold);box-shadow:0 7px 0 var(--gold-d)}
+.node.next .bubble::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:4px solid rgba(124,92,255,.35);animation:pulse 1.6s ease-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes pulse{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.25);opacity:0}}
+.ninfo{flex:1;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 14px;cursor:pointer}
+.ninfo .t{font-weight:900;font-size:16px}
+.ninfo .s{font-size:13px;color:var(--muted);margin-top:2px}
+.ninfo .x{font-size:12px;color:var(--violet-d);font-weight:900;margin-top:4px}
+.node.done .ninfo .x{color:var(--gold-d)}
+.start-tag{position:absolute;top:-26px;left:6px;background:var(--card);border:2px solid var(--violet);color:var(--violet-d);font-size:12px;font-weight:900;padding:3px 9px;border-radius:10px;animation:bob 1.6s ease-in-out infinite;white-space:nowrap;z-index:2}
+.node:nth-child(even) .start-tag{left:auto;right:6px}
+.chest{text-align:center;padding:8px 0 4px}
+.chest svg{width:96px;height:96px;cursor:pointer}
+.chest.locked svg{filter:grayscale(1);opacity:.5;cursor:default}
+.chest.open svg{animation:wiggle .8s ease-in-out infinite}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.seg{display:flex;background:var(--line);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;border:none;background:none;padding:9px;border-radius:11px;cursor:pointer;font-weight:900;color:var(--muted);font-size:14px}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 2px 0 var(--line)}
+/* review */
+.pbar{height:16px;border-radius:99px;background:var(--line);overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .35s;box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)}
+.flash{min-height:220px;display:flex;flex-direction:column;justify-content:center;text-align:center;gap:14px}
+.flash .sent{font-size:22px;line-height:1.45;font-weight:800}
+.flash .sent b{color:var(--violet-d);background:#EFEAFF;padding:0 5px;border-radius:7px}
+.flash .ans{border-top:2px dashed var(--line);padding-top:14px}
+.flash .w{font-size:26px;font-weight:900}
+.flash .m{font-size:17px;color:var(--muted);margin-top:4px}
+.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grades .btn{flex-direction:column;gap:2px;padding:10px 4px;font-size:14px}
+.grades .btn small{font-size:11px;opacity:.9;text-transform:none;font-weight:800}
+.combo{display:inline-block;background:var(--flame);color:#fff;padding:4px 12px;border-radius:999px;font-weight:900;font-size:14px;animation:pop .3s}
+@keyframes pop{0%{transform:scale(.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.speak{width:52px;height:52px;border-radius:50%;border:none;background:var(--sky);color:#fff;cursor:pointer;box-shadow:0 4px 0 var(--sky-d);display:inline-grid;place-items:center}
+.speak:active{transform:translateY(3px);box-shadow:0 1px 0 var(--sky-d)}
+.speak svg{width:24px;height:24px}
+.speak.slow{background:#8FD8FA;box-shadow:0 4px 0 #5CBDE8}
+.mic{width:76px;height:76px;border-radius:50%;border:none;background:var(--red);color:#fff;cursor:pointer;box-shadow:0 6px 0 var(--red-d);display:inline-grid;place-items:center}
+.mic svg{width:34px;height:34px}
+.mic.on{animation:pulseR 1s infinite}
+@keyframes pulseR{0%{box-shadow:0 6px 0 var(--red-d),0 0 0 0 rgba(244,63,94,.5)}100%{box-shadow:0 6px 0 var(--red-d),0 0 0 22px rgba(244,63,94,0)}}
+/* listening */
+.line{padding:9px 12px;border-radius:12px;margin:4px 0;cursor:pointer;line-height:1.5;font-weight:700}
+.line:hover{background:#F4F1FF}
+.line.on{background:#EFEAFF;outline:2px solid var(--violet)}
+.line .sp{font-size:12px;font-weight:900;color:var(--violet-d);margin-right:6px}
+.blur{filter:blur(6px);user-select:none}
+.q{margin:14px 0}
+.q .opt{display:block;width:100%;text-align:left;padding:12px 14px;margin:6px 0;border-radius:14px;border:2px solid var(--line);background:var(--card);cursor:pointer;font-size:15px;box-shadow:0 3px 0 var(--line)}
+.q .opt.pick{border-color:var(--violet);background:#F1EDFF}
+.q .opt.ok{border-color:var(--green);background:#E8FBEF}
+.q .opt.bad{border-color:var(--red);background:#FFECEF}
+.dots{display:inline-flex;gap:5px}
+.dots i{width:16px;height:16px;border-radius:50%;background:var(--grey);display:inline-block;cursor:pointer}
+.dots i.on{background:var(--green)}
+.li{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:2px solid var(--line)}
+.li:last-child{border-bottom:none}
+video{width:100%;border-radius:14px;background:#000;max-height:320px}
+/* shadow */
+.target{font-size:21px;line-height:1.6;font-weight:800;text-align:center}
+.target .ok{color:var(--green-d)} .target .miss{color:var(--red);text-decoration:underline wavy}
+.heard{min-height:28px;text-align:center;color:var(--muted);font-size:16px}
+.score{font-size:44px;font-weight:900;text-align:center}
+/* chat */
+.chat{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow:auto;padding:4px}
+.msg{max-width:85%;padding:11px 14px;border-radius:18px;line-height:1.45;font-weight:700}
+.msg.ai{background:#F1EDFF;align-self:flex-start;border-bottom-left-radius:6px}
+.msg.me{background:var(--violet);color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
+.fix{align-self:flex-end;max-width:85%;background:#FFF7E6;border:2px solid #FFE1A6;border-radius:14px;padding:9px 12px;font-size:14px}
+.fix b{color:var(--gold-d)}
+/* progress */
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tile{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px;text-align:center}
+.tile .n{font-size:24px;font-weight:900}
+.tile .l{font-size:12px;color:var(--muted)}
+.heat{display:grid;grid-template-columns:repeat(12,1fr);gap:5px}
+.heat .col{display:grid;grid-template-rows:repeat(7,1fr);gap:5px}
+.heat i{aspect-ratio:1;border-radius:5px;background:var(--line);display:block}
+.heat i.l1{background:#D7CCFF}.heat i.l2{background:#A994FF}.heat i.l3{background:#7C5CFF}.heat i.l4{background:#4F2FD6}
+.heat i.today{outline:2px solid var(--gold)}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.badge{text-align:center;font-size:12px}
+.badge .b{width:64px;height:64px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;font-size:30px;background:linear-gradient(145deg,#FFD15C,#FFB020);box-shadow:0 5px 0 var(--gold-d)}
+.badge.lock .b{background:var(--line);box-shadow:0 5px 0 var(--grey);filter:grayscale(1);opacity:.55}
+.badge .nm{font-weight:900}
+.wkrow{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:2px solid var(--line)}
+.wkrow:last-child{border-bottom:none}
+.wkno{width:38px;height:38px;border-radius:12px;background:var(--line);display:grid;place-items:center;font-weight:900;flex:none}
+.wkrow.cur .wkno{background:var(--violet);color:#fff}
+.wkrow.done .wkno{background:var(--gold);color:#fff}
+/* overlays */
+.ov{position:fixed;inset:0;background:rgba(31,27,58,.55);z-index:50;display:grid;place-items:center;padding:16px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{background:var(--card);border-radius:26px;padding:24px;max-width:420px;width:100%;text-align:center;animation:pop .35s;max-height:90vh;overflow:auto}
+.modal h2{font-size:24px;font-weight:900;margin:8px 0}
+.modal .big{font-size:64px;line-height:1}
+.modal .xpgain{display:inline-block;background:#F1EDFF;color:var(--violet-d);font-weight:900;padding:8px 16px;border-radius:999px;font-size:18px;margin:6px 0 16px}
+.modal.left{text-align:left}
+.float{position:fixed;z-index:60;font-weight:900;color:var(--violet-d);font-size:20px;pointer-events:none;animation:floatUp 1s ease-out forwards;text-shadow:0 2px 0 #fff}
+@keyframes floatUp{to{transform:translateY(-50px);opacity:0}}
+.toast{pointer-events:none;position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:60;background:var(--ink);color:#fff;padding:10px 16px;border-radius:14px;font-size:14px;animation:pop .3s;max-width:90vw}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
+.hide{display:none!important}
+.tabs2{display:flex;gap:8px;margin:14px 0 0;overflow:auto}
+.note{background:#FFF7E6;border:2px solid #FFE1A6;border-radius:14px;padding:10px 12px;font-size:14px}
+.err{background:#FFECEF;border:2px solid #FFC2CD;border-radius:14px;padding:10px 12px;font-size:14px;color:#A3122F}
+.spin{width:22px;height:22px;border:3px solid var(--line);border-top-color:var(--violet);border-radius:50%;animation:sp 1s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:480px){
+  .grid4{grid-template-columns:repeat(2,1fr)} .badges{grid-template-columns:repeat(3,1fr)}
+  .brand span{display:none} .flash .sent{font-size:19px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><svg class="logo" viewBox="0 0 64 64"><rect x="6" y="10" width="52" height="44" rx="16" fill="#7C5CFF"/><rect x="6" y="10" width="52" height="38" rx="16" fill="#9B7BFF"/><circle cx="24" cy="29" r="6" fill="#fff"/><circle cx="40" cy="29" r="6" fill="#fff"/><circle cx="25" cy="30" r="3" fill="#1F1B3A"/><circle cx="41" cy="30" r="3" fill="#1F1B3A"/><path d="M26 39q6 5 12 0" stroke="#1F1B3A" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="29" y="2" width="6" height="10" rx="3" fill="#FFB020"/></svg><span>English Quest</span></div>
+    <div class="stat flame" id="hStreak" title="Chuỗi ngày học">🔥 <b>0</b></div>
+    <div class="stat xp" id="hXp" title="Tổng XP">⚡ <b>0</b></div>
+    <div class="ring" id="hRing" title="Mục tiêu XP hôm nay"></div>
+    <button class="iconbtn" data-act="settings" title="Cài đặt" aria-label="Cài đặt"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+  <div class="save" id="saveState"></div>
+</header>
+<main class="wrap" id="view"></main>
+<nav class="nav"><div class="nav-in" id="nav"></div></nav>
+<div id="mediaHome" class="hide"></div>
+<canvas id="confetti"></canvas>
+<script>
+"use strict";
+/* ================= DATA ================= */
+const CARDS_RAW = [["blocker", "Is there any <b>blocker</b> I can help with before the release?", "vấn đề đang chặn, khiến việc không tiến triển được", "meeting standup"], ["on track", "The payment feature is <b>on track</b> for Friday.", "đúng tiến độ", "meeting standup"], ["behind schedule", "We're two days <b>behind schedule</b> because of the API changes.", "chậm tiến độ", "meeting standup"], ["wrap up", "I'll <b>wrap up</b> the login screen today and start testing tomorrow.", "hoàn tất, làm nốt", "meeting standup"], ["follow up", "Let me <b>follow up</b> with the backend team and get back to you.", "theo dõi tiếp, hỏi lại sau", "meeting"], ["get back to (someone)", "I don't know yet, but I'll <b>get back to</b> you this afternoon.", "trả lời lại ai đó sau", "meeting"], ["sync", "Can we have a quick <b>sync</b> about the database design?", "cuộc trao đổi ngắn để thống nhất", "meeting"], ["catch up", "Let's <b>catch up</b> after lunch to review the progress.", "gặp nhau cập nhật tình hình", "meeting"], ["agenda", "The first item on the <b>agenda</b> is the sprint review.", "chương trình, nội dung cuộc họp", "meeting"], ["action item", "The <b>action item</b> for me is to update the documentation.", "việc cần làm sau cuộc họp", "meeting"], ["take ownership", "Who wants to <b>take ownership</b> of the notification module?", "nhận trách nhiệm chính", "meeting"], ["heads-up", "Just a <b>heads-up</b>: the staging server will be down tonight.", "báo trước, lưu ý sớm", "meeting communication"], ["ASAP", "Please fix this crash <b>ASAP</b>; users are complaining.", "càng sớm càng tốt (as soon as possible)", "communication"], ["ETA", "What's the <b>ETA</b> for the new build?", "thời điểm dự kiến hoàn thành", "communication"], ["FYI", "<b>FYI</b>, the client changed the color scheme again.", "để bạn biết (for your information)", "communication"], ["clarify", "Could you <b>clarify</b> what you mean by \"offline mode\"?", "làm rõ", "communication"], ["align", "We need to <b>align</b> with the design team before coding.", "thống nhất, đồng bộ ý kiến", "communication"], ["push back", "It's okay to <b>push back</b> if the deadline is unrealistic.", "phản đối, đề nghị xem lại", "communication"], ["bandwidth", "I don't have the <b>bandwidth</b> to take another task this week.", "khả năng, thời gian rảnh để nhận việc", "communication"], ["loop in", "I'll <b>loop in</b> the QA team so they know about the change.", "thêm ai đó vào cuộc trao đổi", "communication"], ["deadline", "The <b>deadline</b> for this feature is next Monday.", "hạn chót", "project"], ["milestone", "We reached our first <b>milestone</b>: the MVP is live.", "cột mốc quan trọng", "project"], ["scope", "Adding chat is outside the <b>scope</b> of this sprint.", "phạm vi công việc", "project"], ["scope creep", "The client keeps adding features; this is <b>scope creep</b>.", "phạm vi phình dần ngoài kế hoạch", "project"], ["requirement", "The <b>requirement</b> says the app must work offline.", "yêu cầu", "project"], ["estimate", "How long do you <b>estimate</b> this task will take?", "ước lượng", "project"], ["prioritize", "We should <b>prioritize</b> bug fixes over new features.", "ưu tiên", "project"], ["backlog", "I added the dark mode idea to the <b>backlog</b>.", "danh sách việc tồn, chờ làm", "project agile"], ["sprint", "This <b>sprint</b> runs for two weeks.", "chu kỳ phát triển ngắn (thường 1–2 tuần)", "project agile"], ["user story", "Each <b>user story</b> describes what the user wants to achieve.", "mô tả tính năng từ góc nhìn người dùng", "project agile"], ["acceptance criteria", "The <b>acceptance criteria</b> are not clear enough to start coding.", "tiêu chí nghiệm thu", "project agile"], ["stakeholder", "We need approval from all <b>stakeholders</b> before launch.", "các bên liên quan", "project"], ["trade-off", "There's a <b>trade-off</b> between performance and readability here.", "sự đánh đổi", "project discussion"], ["feasible", "Is it <b>feasible</b> to finish this in one week?", "khả thi", "project discussion"], ["workaround", "There's no fix yet, but here's a <b>workaround</b>.", "cách tạm thời để né lỗi", "project bug"], ["ship", "We plan to <b>ship</b> version 2.0 next month.", "phát hành, đưa ra dùng thật", "release"], ["release", "The <b>release</b> notes list all the new features.", "bản phát hành", "release"], ["roll out", "We'll <b>roll out</b> the update to 10% of users first.", "triển khai dần", "release"], ["roll back", "The new version crashed, so we had to <b>roll back</b>.", "quay lại phiên bản cũ", "release"], ["deploy", "I'm going to <b>deploy</b> the fix to production now.", "triển khai lên máy chủ", "release devops"], ["environment", "The bug only happens in the staging <b>environment</b>.", "môi trường (dev, staging, production)", "devops"], ["production", "Never test directly on <b>production</b>.", "môi trường thật có người dùng", "devops"], ["hotfix", "We need a <b>hotfix</b> for the login crash tonight.", "bản sửa lỗi khẩn cấp", "release bug"], ["downtime", "The migration will cause ten minutes of <b>downtime</b>.", "thời gian hệ thống ngừng hoạt động", "devops"], ["outage", "There was an <b>outage</b> last night because the database ran out of space.", "sự cố ngừng dịch vụ", "devops incident"], ["bug", "I found a <b>bug</b> in the checkout flow.", "lỗi phần mềm", "bug"], ["reproduce", "I can't <b>reproduce</b> the issue on my phone.", "tái hiện lỗi", "bug"], ["steps to reproduce", "Please add the <b>steps to reproduce</b> to the ticket.", "các bước để tái hiện lỗi", "bug"], ["root cause", "We still don't know the <b>root cause</b> of the crash.", "nguyên nhân gốc", "bug"], ["edge case", "Did you handle the <b>edge case</b> where the list is empty?", "trường hợp biên, hiếm gặp", "bug code"], ["regression", "This update introduced a <b>regression</b> in the search feature.", "lỗi cũ xuất hiện lại / tính năng đang chạy bị hỏng sau thay đổi", "bug testing"], ["intermittent", "The error is <b>intermittent</b>; it happens about once a day.", "lúc có lúc không", "bug"], ["crash", "The app <b>crashes</b> when the user rotates the screen.", "bị dừng đột ngột, văng app", "bug"], ["freeze", "The UI <b>freezes</b> for a few seconds while loading images.", "bị đơ, treo", "bug"], ["memory leak", "The profiler shows a <b>memory leak</b> in the image cache.", "rò rỉ bộ nhớ", "bug performance"], ["troubleshoot", "I spent the morning <b>troubleshooting</b> the network issue.", "tìm và xử lý sự cố", "bug"], ["debug", "I'm still <b>debugging</b> the payment callback.", "gỡ lỗi", "bug code"], ["stack trace", "Can you send me the full <b>stack trace</b>?", "dấu vết ngăn xếp khi lỗi xảy ra", "bug"], ["log", "Check the server <b>logs</b> for any error messages.", "nhật ký hệ thống", "bug devops"], ["ticket", "I've created a <b>ticket</b> for this issue in Jira.", "phiếu công việc / phiếu lỗi", "project bug"], ["assign", "The ticket is <b>assigned</b> to me.", "giao việc cho ai", "project"], ["pull request", "Please review my <b>pull request</b> when you have time.", "yêu cầu gộp code (PR)", "code-review git"], ["review", "Thanks for the <b>review</b>; I'll address your comments.", "đánh giá, xem xét code", "code-review"], ["address (a comment)", "I've <b>addressed</b> all the comments in the latest commit.", "xử lý, giải quyết (góp ý)", "code-review"], ["nitpick", "Just a <b>nitpick</b>: this variable name could be clearer.", "góp ý nhỏ, chi tiết vụn vặt", "code-review"], ["LGTM", "<b>LGTM</b>, feel free to merge.", "trông ổn (looks good to me)", "code-review"], ["approve", "The tech lead <b>approved</b> the pull request.", "chấp thuận", "code-review"], ["merge", "I'll <b>merge</b> this branch into main after the tests pass.", "gộp code", "git"], ["conflict", "There's a merge <b>conflict</b> in the settings file.", "xung đột (khi gộp code)", "git"], ["branch", "Create a new <b>branch</b> for each feature.", "nhánh code", "git"], ["commit", "Please write a clear <b>commit</b> message.", "lần lưu thay đổi vào git", "git"], ["revert", "I <b>reverted</b> the last commit because it broke the build.", "hoàn tác thay đổi", "git"], ["rebase", "<b>Rebase</b> your branch on main before opening the PR.", "đặt lại nhánh lên nền mới nhất", "git"], ["build", "The <b>build</b> failed because of a missing dependency.", "bản dựng (quá trình biên dịch, đóng gói)", "devops"], ["pipeline", "The CI <b>pipeline</b> runs the tests automatically.", "chuỗi bước tự động (CI/CD)", "devops"], ["dependency", "We should update this <b>dependency</b> to the latest version.", "thư viện phụ thuộc", "code"], ["deprecated", "This method is <b>deprecated</b>; use the new API instead.", "đã lỗi thời, sắp bị bỏ", "code"], ["backward compatible", "Is the new API <b>backward compatible</b> with old clients?", "tương thích ngược", "code architecture"], ["breaking change", "Renaming this field is a <b>breaking change</b>.", "thay đổi làm hỏng code cũ đang dùng", "code release"], ["refactor", "I want to <b>refactor</b> this class before adding new features.", "tái cấu trúc code", "code"], ["technical debt", "Skipping tests now will create <b>technical debt</b> later.", "nợ kỹ thuật", "code project"], ["legacy code", "Nobody wants to touch the <b>legacy code</b>.", "code cũ, kế thừa", "code"], ["readable", "Short functions make the code more <b>readable</b>.", "dễ đọc", "code"], ["maintainable", "We need a more <b>maintainable</b> structure for this module.", "dễ bảo trì", "code"], ["reusable", "Let's make this button a <b>reusable</b> widget.", "tái sử dụng được", "code"], ["hardcode", "Don't <b>hardcode</b> the API key in the source code.", "viết cứng giá trị vào code", "code"], ["boilerplate", "Flutter has less <b>boilerplate</b> than native Android.", "code mẫu lặp lại, thủ tục", "code"], ["implement", "I'll <b>implement</b> the search feature this week.", "hiện thực, cài đặt (tính năng)", "code"], ["implementation", "The <b>implementation</b> is done, but tests are missing.", "phần hiện thực", "code"], ["performance", "The list scrolls slowly; we need to improve <b>performance</b>.", "hiệu năng", "performance"], ["bottleneck", "The database query is the main <b>bottleneck</b>.", "điểm nghẽn", "performance"], ["optimize", "Can we <b>optimize</b> the image loading?", "tối ưu", "performance"], ["latency", "High <b>latency</b> makes the app feel slow.", "độ trễ", "performance network"], ["scalable", "The current design isn't <b>scalable</b> to a million users.", "có khả năng mở rộng", "architecture"], ["architecture", "Let's discuss the <b>architecture</b> before writing code.", "kiến trúc", "architecture"], ["component", "Each screen is built from small <b>components</b>.", "thành phần", "architecture"], ["layer", "Business logic should stay in the domain <b>layer</b>.", "tầng", "architecture"], ["endpoint", "The <b>endpoint</b> returns a list of transactions.", "điểm cuối API (URL nhận request)", "api"], ["payload", "The request <b>payload</b> is too large.", "dữ liệu gửi kèm request/response", "api"], ["request", "The app sends a <b>request</b> every five seconds.", "yêu cầu gửi lên server", "api"], ["response", "The server <b>response</b> is empty.", "phản hồi từ server", "api"], ["authentication", "We use Google sign-in for <b>authentication</b>.", "xác thực (bạn là ai)", "security api"], ["authorization", "Users without admin <b>authorization</b> can't delete data.", "phân quyền (bạn được làm gì)", "security"], ["permission", "The app needs notification <b>permission</b> on Android 13.", "quyền truy cập", "android security"], ["vulnerability", "The scan found a security <b>vulnerability</b> in an old library.", "lỗ hổng bảo mật", "security"], ["validate", "Always <b>validate</b> user input on the server.", "kiểm tra tính hợp lệ", "code security"], ["fallback", "If the network fails, use cached data as a <b>fallback</b>.", "phương án dự phòng", "code architecture"], ["configure", "You need to <b>configure</b> Firebase before running the app.", "cấu hình", "devops code"], ["set up", "It took me an hour to <b>set up</b> the development environment.", "cài đặt, thiết lập", "devops"], ["straightforward", "The fix is <b>straightforward</b>; it's just one line.", "đơn giản, dễ hiểu", "discussion"], ["tricky", "Handling time zones is a bit <b>tricky</b>.", "hơi khó, dễ sai", "discussion"], ["make sense", "Does that <b>make sense</b> to you?", "hợp lý, hiểu được", "discussion"], ["off the top of my head", "<b>Off the top of my head</b>, I think it takes three days.", "nói nhanh, chưa kiểm tra kỹ", "discussion"], ["double-check", "Let me <b>double-check</b> the numbers before I answer.", "kiểm tra lại", "discussion"], ["figure out", "I'm still trying to <b>figure out</b> why it fails.", "tìm ra, hiểu ra", "discussion"], ["come up with", "We need to <b>come up with</b> a better solution.", "nghĩ ra", "discussion"], ["go through", "Let's <b>go through</b> the design step by step.", "xem lần lượt, rà qua", "discussion"], ["in terms of", "<b>In terms of</b> cost, Flutter is cheaper for us.", "xét về mặt", "discussion"], ["on the same page", "Let's make sure we're all <b>on the same page</b>.", "hiểu giống nhau", "discussion"], ["pros and cons", "What are the <b>pros and cons</b> of using Firebase?", "ưu và nhược điểm", "discussion"], ["I'd suggest", "<b>I'd suggest</b> splitting this into two tickets.", "tôi đề xuất (cách nói lịch sự)", "discussion polite"], ["Would it be possible to", "<b>Would it be possible to</b> extend the deadline by two days?", "liệu có thể... không (nhờ vả lịch sự)", "communication polite"], ["I'm not sure I follow", "Sorry, <b>I'm not sure I follow</b>. Could you explain again?", "tôi chưa theo kịp ý bạn", "communication polite"], ["Could you say that again", "<b>Could you say that again</b> a bit more slowly?", "bạn nói lại được không", "communication polite"], ["freelance", "I work <b>freelance</b> for clients in Europe.", "làm tự do", "freelance"], ["client", "The <b>client</b> wants a demo every Friday.", "khách hàng", "freelance"], ["quote", "I'll send you a <b>quote</b> for the project tomorrow.", "báo giá", "freelance"], ["invoice", "Please pay the <b>invoice</b> within 14 days.", "hóa đơn", "freelance"], ["deliverable", "The first <b>deliverable</b> is a clickable prototype.", "sản phẩm bàn giao", "freelance project"], ["hourly rate", "My <b>hourly rate</b> is negotiable for long projects.", "giá theo giờ", "freelance"], ["proposal", "I wrote a <b>proposal</b> for the app redesign.", "bản đề xuất (khi chào việc)", "freelance"]];
+const NGSL_RAW = ["the", "be", "and", "of", "to", "a", "in", "have", "it", "you", "he", "for", "they", "not", "that", "we", "on", "with", "this", "I", "do", "as", "at", "she", "but", "from", "by", "will", "or", "say", "go", "so", "all", "if", "one", "would", "about", "can", "which", "there", "know", "more", "get", "who", "like", "when", "think", "make", "time", "see", "what", "up", "some", "other", "out", "good", "people", "year", "take", "no", "well", "because", "very", "just", "come", "could", "work", "use", "than", "now", "then", "also", "into", "only", "look", "want", "give", "first", "new", "way", "find", "over", "any", "after", "day", "where", "thing", "most", "should", "need", "much", "right", "how", "back", "mean", "even", "may", "here", "many", "such", "last", "child", "tell", "really", "call", "before", "company", "through", "down", "show", "life", "man", "change", "place", "long", "between", "feel", "too", "still", "problem", "write", "same", "lot", "great", "try", "leave", "number", "both", "own", "part", "point", "little", "help", "ask", "meet", "start", "talk", "something", "put", "another", "become", "interest", "country", "old", "each", "school", "late", "high", "different", "off", "next", "end", "live", "why", "while", "world", "week", "play", "might", "must", "home", "never", "include", "course", "house", "report", "group", "case", "woman", "around", "book", "family", "seem", "let", "again", "kind", "keep", "hear", "system", "every", "question", "during", "always", "big", "set", "small", "study", "follow", "begin", "important", "since", "run", "under", "turn", "few", "bring", "early", "hand", "state", "move", "money", "fact", "however", "area", "provide", "name", "read", "friend", "month", "large", "business", "without", "information", "open", "order", "government", "word", "issue", "market", "pay", "build", "hold", "service", "against", "believe", "second", "though", "yes", "love", "increase", "job", "plan", "result", "away", "example", "happen", "offer", "young", "close", "program", "lead", "buy", "understand", "thank", "far", "today", "hour", "student", "face", "hope", "idea", "cost", "less", "room", "until", "reason", "form", "spend", "head", "car", "learn", "level", "person", "experience", "once", "member", "enough", "bad", "city", "night", "able", "support", "whether", "line", "present", "side", "quite", "although", "sure", "term", "least", "age", "low", "speak", "within", "process", "public", "often", "train", "possible", "actually", "rather", "view", "together", "consider", "price", "parent", "hard", "party", "local", "control", "already", "concern", "product", "lose", "story", "almost", "continue", "stand", "whole", "yet", "rate", "care", "expect", "effect", "sort", "ever", "anything", "cause", "fall", "deal", "water", "send", "allow", "soon", "watch", "base", "probably", "suggest", "past", "power", "test", "visit", "center", "grow", "nothing", "return", "mother", "walk", "matter", "mind", "value", "office", "record", "stay", "force", "stop", "several", "light", "develop", "remember", "bit", "share", "real", "answer", "sit", "figure", "letter", "decide", "language", "subject", "class", "development", "town", "half", "minute", "food", "break", "clear", "future", "either", "ago", "per", "remain", "top", "among", "win", "color", "involve", "reach", "social", "period", "across", "note", "history", "create", "drive", "along", "type", "sound", "eye", "music", "game", "political", "free", "receive", "moment", "sale", "policy", "further", "body", "require", "wait", "general", "appear", "toward", "team", "easy", "individual", "full", "black", "sense", "perhaps", "add", "rule", "pass", "produce", "sell", "short", "agree", "law", "everything", "research", "cover", "paper", "position", "near", "human", "computer", "situation", "staff", "activity", "film", "morning", "war", "account", "shop", "major", "someone", "above", "design", "event", "special", "sometimes", "condition", "carry", "choose", "father", "decision", "table", "certain", "forward", "main", "die", "bear", "cut", "describe", "himself", "available", "especially", "strong", "rise", "girl", "maybe", "community", "else", "particular", "role", "join", "difficult", "please", "detail", "difference", "action", "health", "eat", "step", "true", "phone", "themselves", "draw", "white", "date", "practice", "model", "raise", "customer", "front", "explain", "door", "outside", "behind", "economic", "site", "approach", "teacher", "land", "charge", "finally", "sign", "claim", "relationship", "travel", "enjoy", "death", "nice", "amount", "improve", "picture", "boy", "regard", "organization", "happy", "couple", "act", "range", "quality", "project", "round", "opportunity", "road", "accord", "list", "wish", "therefore", "wear", "fund", "rest", "kid", "industry", "education", "measure", "kill", "serve", "likely", "certainly", "national", "itself", "teach", "field", "security", "air", "benefit", "trade", "risk", "news", "standard", "vote", "percent", "focus", "stage", "space", "instead", "realize", "usually", "data", "single", "address", "performance", "chance", "accept", "society", "technology", "mention", "choice", "save", "common", "culture", "total", "demand", "material", "limit", "listen", "due", "wrong", "foot", "effort", "attention", "upon", "check", "complete", "lie", "pick", "reduce", "personal", "ground", "animal", "arrive", "patient", "current", "century", "evidence", "exist", "similar", "fight", "leader", "fine", "street", "former", "contact", "particularly", "wife", "sport", "prepare", "discuss", "response", "voice", "piece", "finish", "suppose", "apply", "president", "fire", "compare", "court", "police", "store", "poor", "knowledge", "laugh", "arm", "heart", "source", "employee", "manage", "simply", "bank", "firm", "cell", "article", "fast", "attack", "foreign", "surprise", "feature", "factor", "pretty", "recently", "affect", "drop", "recent", "relate", "official", "financial", "miss", "art", "campaign", "private", "pause", "everyone", "forget", "page", "worry", "summer", "drink", "opinion", "park", "represent", "key", "inside", "manager", "international", "contain", "notice", "wonder", "nature", "structure", "section", "myself", "exactly", "plant", "paint", "worker", "press", "whatever", "necessary", "region", "growth", "evening", "influence", "respect", "various", "catch", "thus", "skill", "attempt", "son", "simple", "medium", "average", "stock", "management", "character", "bed", "hit", "establish", "indeed", "final", "economy", "fit", "guy", "function", "yesterday", "image", "size", "behavior", "addition", "determine", "station", "population", "fail", "environment", "production", "contract", "player", "comment", "enter", "occur", "alone", "significant", "drug", "wall", "series", "direct", "success", "tomorrow", "director", "clearly", "lack", "review", "depend", "race", "recognize", "window", "purpose", "department", "gain", "tree", "college", "argue", "board", "holiday", "mark", "church", "machine", "achieve", "item", "prove", "cent", "season", "floor", "stuff", "wide", "anyone", "method", "analysis", "election", "military", "hotel", "club", "below", "movie", "doctor", "discussion", "sorry", "challenge", "nation", "nearly", "statement", "link", "despite", "introduce", "advantage", "ready", "marry", "strike", "mile", "seek", "ability", "unit", "card", "hospital", "quickly", "interview", "agreement", "release", "tax", "solution", "capital", "popular", "specific", "beautiful", "fear", "aim", "television", "serious", "target", "degree", "pull", "red", "husband", "access", "movement", "treat", "identify", "loss", "shall", "modern", "pressure", "bus", "treatment", "conference", "yourself", "supply", "village", "worth", "natural", "express", "indicate", "attend", "brother", "investment", "score", "organize", "trip", "beyond", "sleep", "fish", "promise", "potential", "energy", "trouble", "relation", "touch", "file", "middle", "bar", "suffer", "strategy", "deep", "except", "clean", "tend", "advance", "fill", "star", "network", "generally", "operation", "match", "avoid", "seat", "throw", "task", "normal", "goal", "associate", "blue", "positive", "option", "box", "huge", "message", "instance", "style", "refer", "cold", "push", "quarter", "assume", "baby", "successful", "sing", "doubt", "competition", "theory", "propose", "reference", "argument", "adult", "fly", "document", "pattern", "application", "hot", "obviously", "unclear", "bill", "search", "separate", "central", "career", "anyway", "speech", "dog", "officer", "throughout", "oil", "dress", "profit", "guess", "fun", "protect", "resource", "science", "disease", "balance", "damage", "basis", "author", "basic", "encourage", "hair", "male", "operate", "reflect", "exercise", "useful", "restaurant", "income", "property", "previous", "dark", "imagine", "okay", "earn", "daughter", "post", "newspaper", "define", "conclusion", "clock", "everybody", "weekend", "perform", "professional", "mine", "debate", "memory", "green", "song", "object", "maintain", "credit", "ring", "discover", "dead", "afternoon", "prefer", "extend", "possibility", "direction", "facility", "variety", "daily", "clothes", "screen", "track", "dance", "completely", "female", "responsibility", "original", "sister", "rock", "dream", "nor", "university", "easily", "agency", "dollar", "garden", "fix", "ahead", "cross", "yeah", "candidate", "weight", "legal", "proposal", "version", "conversation", "somebody", "pound", "magazine", "shape", "sea", "immediately", "welcome", "smile", "communication", "agent", "traditional", "replace", "judge", "herself", "suddenly", "generation", "estimate", "favorite", "difficulty", "purchase", "shoot", "announce", "unless", "independent", "recommend", "survey", "majority", "stick", "request", "rich", "wind", "none", "exchange", "budget", "famous", "blood", "appropriate", "block", "warm", "count", "scene", "writer", "content", "prevent", "safe", "invite", "mix", "element", "effective", "correct", "medical", "admit", "beat", "telephone", "copy", "committee", "aware", "advice", "handle", "glass", "trial", "stress", "radio", "administration", "complex", "text", "context", "ride", "directly", "heavy", "remove", "conduct", "equipment", "otherwise", "title", "extra", "executive", "chair", "expensive", "sample", "sex", "deliver", "video", "connection", "primary", "weather", "collect", "inform", "principle", "straight", "appeal", "highly", "trust", "wonderful", "flat", "absolutely", "flow", "fair", "additional", "responsible", "farm", "collection", "hang", "negative", "band", "relative", "tour", "alternative", "software", "pair", "ship", "attitude", "cheap", "double", "leg", "observe", "sentence", "print", "progress", "truth", "nobody", "examine", "lay", "speed", "politics", "reply", "display", "transfer", "perfect", "slightly", "overall", "intend", "user", "respond", "dinner", "slow", "regular", "physical", "apart", "suit", "federal", "reveal", "percentage", "peace", "status", "crime", "decline", "decade", "launch", "warn", "consumer", "favor", "dry", "partner", "institution", "spot", "horse", "eventually", "heat", "excite", "reader", "importance", "distance", "guide", "grant", "taxi", "feed", "pain", "sector", "mistake", "ensure", "satisfy", "chief", "cool", "expert", "wave", "south", "labor", "surface", "library", "excellent", "edge", "camp", "audience", "lift", "procedure", "email", "global", "struggle", "advertise", "select", "surround", "extent", "river", "annual", "fully", "contrast", "roll", "reality", "photograph", "artist", "conflict", "entire", "presence", "crowd", "corner", "gas", "shift", "net", "category", "secretary", "defense", "quick", "cook", "spread", "nuclear", "scale", "driver", "ball", "cry", "introduction", "requirement", "north", "confirm", "senior", "photo", "refuse", "transport", "emerge", "map", "concept", "island", "reform", "neither", "football", "survive", "flight", "left", "solve", "neighbor", "background", "technique", "traffic", "improvement", "tool", "consequence", "circumstance", "smoke", "reaction", "rain", "busy", "lesson", "brain", "mass", "funny", "contribute", "failure", "schedule", "speaker", "bottom", "adopt", "combine", "mountain", "waste", "hide", "marriage", "ticket", "meal", "colleague", "bag", "repeat", "equal", "expression", "plus", "extremely", "owner", "plane", "commercial", "lady", "duty", "strength", "connect", "cultural", "arrange", "scheme", "payment", "unfortunately", "brief", "bird", "demonstrate", "contribution", "appreciate", "chapter", "secret", "apparently", "novel", "union", "burn", "trend", "initial", "pleasure", "suggestion", "critical", "gather", "mostly", "earth", "pop", "essential", "desire", "promote", "currently", "employ", "path", "topic", "beach", "attract", "engage", "powerful", "flower", "crisis", "settle", "boat", "aid", "fan", "kitchen", "twice", "fresh", "delay", "safety", "engineer", "quiet", "insurance", "nurse", "divide", "length", "investigation", "package", "somewhere", "expand", "commit", "obvious", "jump", "weapon", "relatively", "host", "winter", "district", "broad", "tire", "spring", "spirit", "lunch", "actual", "pool", "battle", "tradition", "cash", "hardly", "award", "coach", "experiment", "consideration", "strange", "code", "possibly", "threat", "accident", "impossible", "revenue", "enable", "afraid", "active", "conclude", "religious", "cancer", "convince", "vary", "environmental", "sun", "healthy", "blow", "volume", "location", "invest", "proceed", "wash", "actor", "glad", "tape", "whereas", "opposite", "stone", "sum", "murder", "monitor", "soldier", "finance", "hate", "egg", "concert", "shock", "comfortable", "usual", "carefully", "pack", "recall", "wine", "camera", "swim", "manufacture", "theater", "cycle", "coffee", "totally", "museum", "visitor", "freedom", "construction", "dear", "objective", "moreover", "onto", "historical", "oppose", "branch", "vehicle", "scientist", "route", "bind", "belong", "taste", "tonight", "fashion", "danger", "bomb", "army", "dangerous", "decrease", "hurt", "council", "editor", "normally", "sight", "generate", "gift", "delivery", "deny", "guest", "anybody", "bedroom", "quote", "climb", "basically", "violence", "minister", "mainly", "mouth", "noise", "manner", "gun", "square", "occasion", "familiar", "ignore", "destroy", "affair", "civil", "locate", "citizen", "temperature", "gold", "domestic", "load", "belief", "troop", "technical", "remind", "arrangement", "skin", "prison", "switch", "acquire", "corporate", "fairly", "wood", "participate", "tough", "tear", "representative", "capacity", "border", "shake", "assessment", "shoe", "ought", "ad", "fee", "hall", "regulation", "escape", "studio", "proper", "relax", "tourist", "component", "afford", "lawyer", "suspect", "cup", "description", "confidence", "industrial", "complain", "perspective", "error", "arrest", "assess", "register", "asset", "signal", "finger", "relevant", "explore", "leadership", "commitment", "wake", "necessarily", "bright", "frame", "slowly", "bond", "hire", "hole", "tie", "internal", "chain", "literature", "victim", "threaten", "division", "secure", "amaze", "device", "birth", "forest", "label", "root", "factory", "expense", "channel", "investigate", "recommendation", "rank", "typical", "west", "friendly", "resident", "provision", "concentrate", "plenty", "export", "entirely", "strongly", "bridge", "consist", "graduate", "brand", "moral", "insist", "combination", "abuse", "ice", "principal", "master", "definitely", "session", "grade", "nevertheless", "predict", "previously", "protection", "largely", "wed", "rent", "shot", "appearance", "reasonable", "guarantee", "till", "theme", "judgment", "odd", "approve", "loan", "definition", "elect", "atmosphere", "farmer", "comparison", "characteristic", "license", "rely", "narrow", "succeed", "identity", "desk", "permit", "seriously", "wild", "empty", "commission", "unique", "association", "instrument", "investor", "practical", "tea", "lovely", "soft", "row", "youth", "lock", "fuel", "expectation", "employment", "celebrate", "sexual", "shoulder", "breath", "increasingly", "import", "bottle", "ourselves", "sheet", "engine", "cast", "notion", "conservative", "journey", "opposition", "relief", "debt", "honor", "outcome", "blame", "explanation", "arise", "musical", "recover", "dad", "stretch", "declare", "retire", "tiny", "careful", "suitable", "native", "fruit", "analyze", "witness", "mail", "terrible", "researcher", "ordinary", "selection", "anywhere", "mental", "participant", "vision", "personality", "specifically", "fat", "entry", "fellow", "chemical", "capture", "tip", "discount", "peak", "chairman", "proportion", "ear", "disappear", "shout", "yard", "constant", "significantly", "hill", "considerable", "instruction", "intelligence", "ideal", "folk", "surely", "guard", "cat", "somewhat", "kiss", "presentation", "joint", "compete", "poll", "weak", "faith", "reduction", "reserve", "complaint", "bore", "mission", "somehow", "tone", "neighborhood", "passenger", "justice", "phase", "thin", "rush", "formal", "religion", "employer", "reject", "latter", "plate", "ban", "steal", "protest", "index", "sad", "frequently", "circle", "helpful", "command", "attractive", "sick", "impression", "unable", "joke", "sky", "column", "electronic", "impose", "criminal", "besides", "properly", "ancient", "coast", "ill", "kick", "closely", "multiple", "yield", "via", "legislation", "county", "unlike", "mobile", "assistant", "implement", "chart", "attach", "hell", "everywhere", "advise", "household", "acknowledge", "reward", "east", "hat", "academic", "voter", "meanwhile", "furthermore", "accuse", "scientific", "wage", "absence", "construct", "remark", "medicine", "professor", "rare", "intention", "dozen", "settlement", "gap", "widely", "minimum", "northern", "estate", "equally", "expose", "alive", "shut", "victory", "resolve", "critic", "variable", "enormous", "sweet", "permanent", "emotion", "pursue", "tall", "urge", "enemy", "appoint", "milk", "talent", "smell", "prior", "priority", "online", "phrase", "pilot", "stable", "merely", "resolution", "communicate", "injury", "vast", "exhibition", "producer", "regional", "immediate", "incident", "childhood", "draft", "slip", "accompany", "politician", "angry", "knock", "seed", "salary", "illustrate", "imply", "breakfast", "temporary", "liberal", "lake", "qualify", "competitive", "truly", "hi", "yellow", "habit", "disk", "core", "emotional", "aircraft", "self", "metal", "existence", "bone", "panel", "prime", "appointment", "emphasize", "maximum", "effectively", "elsewhere", "bother", "initiative", "sharp", "diet", "motion", "gray", "plastic", "complicate", "discipline", "disappoint", "boss", "assumption", "freeze", "extreme", "passage", "reputation", "forth", "negotiation", "mechanism", "coat", "democracy", "pocket", "lucky", "crash", "observation", "meat", "concentration", "implication", "deserve", "unusual", "defend", "classic", "king", "interaction", "repair", "collapse", "borrow", "fundamental", "dish", "abroad", "soul", "capable", "defeat", "presidential", "perfectly", "enhance", "proud", "emergency", "educational", "distinguish", "substantial", "nearby", "manufacturer", "slide", "valuable", "personally", "breast", "cope", "approximately", "accommodation", "highlight", "reporter", "climate", "shirt", "exception", "corporation", "chip", "winner", "encounter", "brown", "breathe", "excuse", "partly", "tennis", "urban", "confuse", "southern", "output", "beauty", "massive", "install", "calculate", "mouse", "mathematics", "upper", "creation", "occupy", "outline", "sufficient", "update", "luck", "preserve", "split", "swing", "illness", "journalist", "sudden", "advertisement", "consistent", "originally", "aside", "comfort", "secondly", "severe", "gene", "prospect", "snow", "plot", "neck", "criteria", "primarily", "integrate", "criticism", "convention", "bet", "retain", "sequence", "plain", "volunteer", "rural", "calm", "abandon", "examination", "silence", "rapidly", "efficient", "revolution", "delight", "spell", "premise", "lean", "dramatic", "differ", "grateful", "protein", "bike", "distribute", "intellectual", "derive", "crucial", "unemployment", "wheel", "crop", "minority", "origin", "interpretation", "gentleman", "drama", "landscape", "educate", "toy", "fault", "exhibit", "minor", "hunt", "storm", "thick", "achievement", "negotiate", "dominate", "supplier", "prize", "typically", "peer", "pension", "wing", "acquisition", "laughter", "deeply", "recognition", "electricity", "assistance", "roof", "retirement", "respectively", "variation", "ultimately", "proof", "soil", "smart", "layer", "upset", "tooth", "representation", "preparation", "dispute", "agenda", "emphasis", "edition", "silver", "entertainment", "honest", "undertake", "retail", "wire", "unlikely", "gay", "publication", "slight", "unknown", "framework", "zone", "restrict", "trace", "inch", "equivalent", "solid", "enterprise", "elderly", "owe", "governor", "uniform", "port", "pitch", "arrival", "contemporary", "gate", "ease", "beer", "specialist", "assure", "profile", "mood", "episode", "crack", "numerous", "submit", "symptom", "virtually", "era", "coverage", "tension", "cable", "sensitive", "nervous", "input", "isolate", "prisoner", "eliminate", "tight", "wet", "secondary", "welfare", "recruit", "exclude", "string", "cloud", "persuade", "inspire", "grand", "hence", "crew", "phenomenon", "pupil", "false", "assist", "restore", "formula", "alter", "perceive", "routine", "sink", "stare", "anymore", "hero", "supporter", "convert", "steady", "meter", "truck", "nose", "beside", "sail", "disaster", "pace", "heavily", "devote", "terrorist", "justify", "vital", "fascinate", "external", "spare", "whenever", "depression", "guilty", "underlie", "mom", "distinction", "satisfaction", "incorporate", "pour", "sweep", "obligation", "sir", "evaluate", "anger", "pub", "perception", "naturally", "currency", "database", "initially", "territory", "stream", "rarely", "height", "apparent", "western", "expansion", "constantly", "muscle", "scare", "badly", "everyday", "boundary", "ratio", "essay", "scream", "withdraw", "pollution", "disorder", "furniture", "symbol", "apartment", "demonstration", "analyst", "platform", "steel", "cake", "transform", "wound", "restriction", "foundation", "designer", "strain", "innovation", "album", "singer", "trail", "trap", "loose", "extension", "wealth", "gradually", "tank", "evil", "remarkable", "tune", "grass", "invitation", "transition", "frighten", "bid", "breed", "extraordinary", "brilliant", "adviser", "stem", "reverse", "mode", "mirror", "awful", "pose", "adjust", "creative", "nowadays", "poem", "agricultural", "competitor", "alcohol", "festival", "vegetable", "van", "confident", "planet", "curve", "knee", "overcome", "web", "depth", "entrance", "log", "giant", "god", "portion", "substance", "extensive", "interpret", "independence", "sugar", "inner", "harm", "consult", "pink", "shadow", "strip", "smooth", "intervention", "impress", "exam", "vice", "radical", "similarly", "behave", "loud", "dimension", "subsequent", "infection", "jacket", "efficiency", "dirty", "statistic", "regularly", "resort", "iron", "broadcast", "membership", "bread", "blind", "pure", "bloody", "ally", "quantity", "bend", "mature", "briefly", "alarm", "disturb", "sustain", "flood", "poverty", "crazy", "cite", "newly", "parallel", "gender", "sponsor", "boot", "accurate", "dealer", "button", "burden", "desert", "mate", "occasionally", "shareholder", "bowl", "discovery", "resistance", "bath", "frequency", "criticize", "tap", "philosophy", "lip", "attribute", "apologize", "approval", "grab", "entitle", "lend", "involvement", "exposure", "conventional", "digital", "translate", "edit", "formation", "deposit", "pleasant", "overseas", "advocate", "establishment", "summary", "rough", "pen", "recovery", "seal", "tube", "tower", "characterize", "specify", "exact", "spin", "operator", "infant", "dig", "drag", "mount", "wrap", "anticipate", "dependent", "specialize", "angle", "chicken", "anxiety", "virus", "precisely", "rival", "offense", "detect", "teenager", "admire", "moderate", "surgery", "musician", "significance", "shower", "illegal", "charity", "universal", "cigarette", "constitute", "adequate", "consultant", "historian", "cousin", "visual", "stupid", "keen", "ethnic", "twin", "clinical", "eastern", "forecast", "segment", "custom", "adapt", "sand", "cap", "prompt", "charm", "react", "lecture", "venture", "compound", "rescue", "mess", "preference", "comprehensive", "incentive", "league", "dialog", "cream", "rapid", "cancel", "regret", "dismiss", "margin", "beneath", "opponent", "resist", "capability", "absolute", "correspond", "stroke", "dare", "barrier", "rid", "divorce", "ruin", "bury", "counsel", "tendency", "frequent", "motor", "survival", "counter", "possess", "permission", "valley", "float", "mad", "greatly", "visible", "electric", "impressive", "evolution", "awareness", "violent", "slave", "wealthy", "architecture", "acceptable", "journal", "coal", "measurement", "random", "successfully", "depress", "illustration", "burst", "privilege", "buyer", "mutual", "rail", "motivate", "laboratory", "mortgage", "promotion", "passion", "champion", "fulfill", "dust", "dedicate", "roughly", "skirt", "province", "march", "evaluation", "compromise", "accomplish", "weakness", "announcement", "salt", "glance", "opera", "contest", "brush", "embarrass", "gallery", "genetic", "aggressive", "chest", "format", "literary", "govern", "embrace", "praise", "silent", "pump", "publisher", "celebration", "golf", "compensation", "classical", "weigh", "versus", "deficit", "modify", "flash", "friendship", "profession", "literally", "equation", "gesture", "entertain", "fantastic", "assign", "inflation", "historic", "injure", "remote", "therapy", "orange", "twist", "personnel", "imagination", "disagree", "throat", "insight", "tackle", "forever", "exceed", "expenditure", "joy", "pregnant", "reliable", "gear", "click", "poet", "fortune", "ceremony", "pile", "pig", "mixture", "automatically", "scholar", "psychological", "dramatically", "stake", "creature", "partnership", "participation", "clause", "penalty", "chamber", "fancy", "poetry", "chat", "clothing", "evolve", "sake", "shelf", "boost", "tail", "possession", "abortion", "curious", "wooden", "boom", "tale", "democratic", "maintenance", "consequently", "pot", "cow", "strengthen", "whilst", "constraint", "fold", "bin", "undergo", "potentially", "scope", "pretend", "diversity", "allege", "pride", "intense", "inquiry", "resign", "craft", "strict", "concrete", "shell", "damn", "distinct", "humor", "limitation", "indication", "stability", "wise", "neglect", "compose", "jail", "shelter", "mere", "carbon", "regulate", "cheese", "trigger", "pipe", "destruction", "guitar", "flag", "piano", "magic", "mystery", "ski", "whisper", "rear", "menu", "species", "moon", "presumably", "bless", "airline", "amendment", "grandmother", "jury", "cooperation", "civilian", "composition", "coin", "regardless", "scan", "bunch", "racial", "greet", "hopefully", "sanction", "trick", "paragraph", "maker", "chocolate", "stimulate", "belt", "potato", "narrative", "tissue", "barely", "invent", "tourism", "pro", "stair", "hesitate", "shine", "motivation", "romantic", "firmly", "interior", "stomach", "nowhere", "pray", "championship", "servant", "immigrant", "excess", "complexity", "liability", "surprisingly", "extract", "implementation", "bias", "differently", "catalog", "continuous", "golden", "stamp", "guideline", "envelope", "knife", "biological", "consume", "luxury", "weekly", "wherever", "bite", "printer", "firstly", "anxious", "adventure", "fence", "exhaust", "attraction", "ocean", "quietly", "castle", "veteran", "reflection", "nerve", "determination", "altogether", "fiction", "carpet", "cluster", "confusion", "hurry", "logic", "controversial", "raw", "grammar", "revise", "hint", "hook", "bell", "liquid", "panic", "uncle", "rice", "slope", "happiness", "genuine", "vessel", "verb", "reckon", "silly", "transportation", "harbor", "comedy", "chase", "storage", "universe", "horrible", "sheep", "lover", "rat", "portrait", "innocent", "substitute", "supplement", "adjustment", "reasonably", "filter", "flexible", "abstract", "tent", "precise", "distant", "stranger", "shade", "grain", "situate", "summarize", "leap", "snap", "probability", "leather", "uncertainty", "swear", "refugee", "shore", "monthly", "comprise", "stir", "excitement", "sigh", "pregnancy", "experimental", "institutional", "slice", "wander", "empire", "subsequently", "gentle", "attendance", "ownership", "qualification", "suspend", "functional", "voluntary", "pale", "stain", "athlete", "organic", "tongue", "server", "structural", "website", "fool", "alongside", "unite", "gently", "compute", "wipe", "weird", "gaze", "fade", "cough", "hypothesis", "royal", "theoretical", "curtain", "mayor", "darkness", "aunt", "tournament", "registration", "fragment", "listener", "immigration", "tender", "density", "ugly", "module", "faithfully", "autumn", "cheek", "attachment", "holder", "solar", "grin", "rose", "noun", "fortunate", "alright", "lazy", "hello", "hunger", "insure", "ashamed", "found", "blog", "thirst"];
+const PHASES = [
+  {weeks:"1–2", name:"Giới thiệu bản thân & công việc", topic:"introducing yourself and your job as a mobile developer", tags:["communication","meeting"], scen:"teammate", read:"Graded reader cấp độ của bạn, hoặc phần About/README của một repo bạn thích"},
+  {weeks:"3–4", name:"Một ngày làm việc của dev", topic:"a normal workday of a software developer: standups, coding, meetings", tags:["standup","meeting"], scen:"standup", read:"Một bài blog ngắn kiểu 'a day in the life of a developer'"},
+  {weeks:"5–6", name:"Flutter & phát triển mobile", topic:"building a mobile app with Flutter: widgets, state, packages", tags:["code","architecture"], scen:"explain", read:"Một trang trong docs.flutter.dev (Get started / Cookbook)"},
+  {weeks:"7–8", name:"Bug, debug & code review", topic:"finding and fixing a bug, then discussing it in a code review", tags:["bug","code-review","git"], scen:"review", read:"Một issue + PR thật trên GitHub của thư viện bạn dùng"},
+  {weeks:"9–10", name:"Họp, tiến độ & release", topic:"sprint planning, reporting progress and releasing a new app version", tags:["project","release","devops","agile"], scen:"planning", read:"Release notes của Flutter, Android hoặc một app bạn dùng"},
+  {weeks:"11–12", name:"Làm việc với khách hàng freelance", topic:"a freelance developer talking with a client about requirements, price and deadlines", tags:["freelance","communication","polite"], scen:"client", read:"Một bài viết về freelancing hoặc mô tả job trên Upwork"}
+];
+const PLAN = [
+  ["Dựng thói quen","Làm bản bận 20 phút đủ 7 ngày","7/7 ngày có học"],
+  ["Tai nghe","Mỗi bài nghe 2–3 lượt: không phụ đề → có transcript","5 bài nghe xong"],
+  ["Shadowing cơ bản","Mỗi ngày shadowing 5 câu","5 ngày có shadowing"],
+  ["Ôn và đo","Nghe lại bài tuần 1, so % hiểu","~150 thẻ đã học"],
+  ["Vào nội dung tech","Một nửa thời gian nghe là nội dung Flutter/Android","3 video tech xem hết"],
+  ["Đọc tài liệu kỹ thuật","Mỗi ngày 1 trang docs, không dịch cả trang","Ghi âm lại bài tự giới thiệu"],
+  ["Từ vựng công việc","Thêm thẻ từ docs, PR, issue, meeting","~300 thẻ tổng"],
+  ["Nói về code","Giải thích bằng lời 1 tính năng bạn đang làm","5 lần nói về code"],
+  ["Hội thoại","2–3 buổi nói với AI mỗi tuần","3 cuộc hội thoại"],
+  ["Người thật","1 buổi với tutor hoặc bạn nói tiếng Anh","1 buổi 30 phút"],
+  ["Tốc độ thật","Podcast tech tốc độ bình thường; shadowing đoạn dài","Nghe 1 tập không dừng"],
+  ["Tổng kết","Làm lại bài đo vốn từ, so với tuần 0","Lập kế hoạch 12 tuần tiếp"]
+];
+const SCEN = {
+  teammate:{name:"Làm quen đồng nghiệp mới",role:"a friendly new teammate on your first day at an international software team",you:"a mobile developer introducing yourself"},
+  standup:{name:"Daily standup",role:"a tech lead running a daily standup meeting",you:"a developer giving your standup update"},
+  explain:{name:"Giải thích tính năng",role:"a tech lead who asks the developer to explain how a Flutter feature they built works",you:"a Flutter developer explaining your feature"},
+  review:{name:"Thảo luận code review",role:"a senior developer reviewing the learner's pull request and asking about their choices",you:"the author of the pull request"},
+  planning:{name:"Sprint planning & tiến độ",role:"a project manager planning the next sprint and asking about estimates and risks",you:"a developer giving estimates"},
+  client:{name:"Gọi điện với khách hàng",role:"a foreign client who wants a mobile app built and asks about scope, price and timeline",you:"a freelance mobile developer"},
+  interview:{name:"Phỏng vấn xin việc",role:"an interviewer at a software company interviewing for a Flutter developer position",you:"a job candidate"},
+  free:{name:"Nói chuyện tự do",role:"a friendly English-speaking friend who chats about tech, work and daily life",you:"yourself"}
+};
+const LEVELS = {A:"CEFR A2: only very common words, short simple sentences, about 100 words in total",B:"CEFR B1: common words, clear sentences, about 160 words in total",C:"CEFR B2: natural workplace English with some idioms, about 220 words in total"};
+const SOURCES = [
+  ["BBC 6 Minute English","https://www.bbc.co.uk/learningenglish/english/features/6-minute-english","A–B"],
+  ["VOA Learning English","https://learningenglish.voanews.com/","A"],
+  ["Flutter (YouTube)","https://www.youtube.com/@flutterdev","B–C"],
+  ["Android Developers (YouTube)","https://www.youtube.com/@AndroidDevelopers","B–C"],
+  ["Fireship (YouTube)","https://www.youtube.com/@Fireship","C"],
+  ["Syntax podcast","https://syntax.fm/","C"]
+];
+const BADGES = [
+  ["first","🚀","Khởi động","Hoàn thành bước đầu tiên",s=>totalSteps()>=1],
+  ["perfect","🌟","Ngày hoàn hảo","Xong đủ 5 bước trong 1 ngày",s=>Object.values(s.days).some(d=>STEPS_FULL.every(k=>d.t&&d.t[k]))],
+  ["s3","🔥","Lửa nhỏ","Chuỗi 3 ngày",s=>s.bestStreak>=3],
+  ["s7","☄️","Một tuần bền bỉ","Chuỗi 7 ngày",s=>s.bestStreak>=7],
+  ["s14","🌋","Không thể dừng","Chuỗi 14 ngày",s=>s.bestStreak>=14],
+  ["s30","👑","Huyền thoại 30","Chuỗi 30 ngày",s=>s.bestStreak>=30],
+  ["c50","📚","50 từ","Học 50 thẻ",s=>learnedCount()>=50],
+  ["itall","🧠","Kho từ IT","Học hết bộ thẻ IT",s=>IT_CARDS.every(c=>S.cards[c.id])],
+  ["ng500","🌱","500 từ gốc","Biết 500 từ cơ bản (NGSL)",s=>ngCount()>=500],
+  ["ng1000","🌿","1000 từ gốc","Biết 1.000 từ cơ bản",s=>ngCount()>=1000],
+  ["ng2000","🌳","2000 từ gốc","Biết 2.000 từ cơ bản",s=>ngCount()>=2000],
+  ["ngall","🗝️","Chìa khóa 92%","Biết toàn bộ 2.809 từ cơ bản",s=>ngCount()>=NGSL_RAW.length],
+  ["mature","💎","Trí nhớ thép","20 thẻ có khoảng ôn ≥ 21 ngày",s=>Object.values(s.cards).filter(c=>c.ivl>=21).length>=20],
+  ["combo","⚡","Combo 20","20 thẻ đúng liên tiếp",s=>s.stats.bestCombo>=20],
+  ["l10","🎧","Đôi tai vàng","Hoàn thành 10 bài nghe",s=>s.stats.listens>=10],
+  ["sh50","🦜","Vẹt chăm chỉ","Shadowing 50 câu",s=>s.stats.shadows>=50],
+  ["t10","🎤","Dám nói","10 cuộc hội thoại",s=>s.stats.convos>=10],
+  ["w4","🏅","Giai đoạn 1","Đi hết tuần 4",s=>curWeek()>4],
+  ["w8","🥈","Giai đoạn 2","Đi hết tuần 8",s=>curWeek()>8],
+  ["w12","🏆","Về đích 12 tuần","Đi hết tuần 12",s=>curWeek()>12]
+];
+const STEPS_FULL = ["vocab","listen","read","shadow","speak"];
+const STEPS_BUSY = ["vocab","listen"];
+const STEP_INFO = {
+  vocab:{t:"Từ vựng",min:10,route:"cards",icon:"book"},
+  listen:{t:"Nghe",min:15,route:"listen",icon:"ear"},
+  read:{t:"Đọc rộng",min:10,route:"read",icon:"page"},
+  shadow:{t:"Shadowing",min:10,route:"speak",icon:"parrot"},
+  speak:{t:"Nói",min:10,route:"speak",icon:"mic"}
+};
+const ICONS = {
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>',
+  ear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><path d="M21 15a2 2 0 0 1-2 2h-1v-6h1a2 2 0 0 1 2 2zM3 15a2 2 0 0 0 2 2h1v-6H5a2 2 0 0 0-2 2z"/></svg>',
+  page:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>',
+  parrot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l5-5 5 5-5 5z"/><path d="M13 11h8M17 7l4 4-4 4"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  vol:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>',
+  turtle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 6 0 0 1 16 0z"/><path d="M20 15h2M6 15l-1 3M18 15l1 3M2 13l2 1"/></svg>'
+};
+const CHEST_SVG = '<svg viewBox="0 0 96 96"><rect x="12" y="40" width="72" height="44" rx="8" fill="#C77B2E"/><rect x="12" y="40" width="72" height="10" fill="#A9611C"/><path d="M12 40 Q48 8 84 40z" fill="#E0923F"/><rect x="42" y="44" width="12" height="16" rx="3" fill="#FFB020"/><rect x="12" y="62" width="72" height="6" fill="#A9611C"/></svg>';
+
+/* ================= UTIL ================= */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const stripTags = s=>String(s).replace(/<[^>]+>/g,"");
+const ymd = d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const today = ()=>ymd(new Date());
+function parseD(s){const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
+const addDays=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return ymd(d)};
+const diffDays=(a,b)=>Math.round((parseD(b)-parseD(a))/864e5);
+function parseJSON(t){const a=t.indexOf("{"),b=t.lastIndexOf("}");if(a<0||b<a)throw new Error("Không đọc được kết quả");return JSON.parse(t.slice(a,b+1))}
+
+/* ================= STATE ================= */
+const LS_KEY="english-quest-v1";
+function defState(){return{v:1,updatedAt:0,startDate:null,level:"B",newPerDay:10,rate:1,voice:"buttery",sound:true,busy:false,xp:0,bestStreak:0,cards:{},custom:[],days:{},badges:{},stats:{listens:0,shadows:0,convos:0,reviews:0,bestCombo:0},listen:[],ngKnown:"",ngScreened:0,ngRatio:null,ngNotes:{},transcript:"",talkScen:null}}
+let S = defState();
+try{const raw=localStorage.getItem(LS_KEY);if(raw)S=Object.assign(defState(),JSON.parse(raw))}catch(e){}
+function day(d){d=d||today();if(!S.days[d])S.days[d]={xp:0,t:{},newDone:0};return S.days[d]}
+
+/* ================= PERSISTENCE ================= */
+let remoteRef=null, writing=false, pending=false, saveTimer=null, saveMode="local";
+function setSave(msg){$("#saveState").textContent=msg}
+function save(){
+  S.updatedAt=Date.now();
+  try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){}
+  if(remoteRef){clearTimeout(saveTimer);saveTimer=setTimeout(writeRemote,1200);setSave("Đang lưu…")}
+}
+async function writeRemote(){
+  if(!remoteRef)return;
+  if(writing){pending=true;return}
+  writing=true;
+  try{await remoteRef.set(JSON.parse(JSON.stringify(S)));setSave("Đã đồng bộ lên Cloudflare")}
+  catch(e){if(e&&e.code==="unauthorized"){remoteRef=null;setSave("Sai mật khẩu đồng bộ — kiểm tra trong Cài đặt")}else{setSave("Chưa lưu lên máy chủ — sẽ thử lại");pending=true}}
+  writing=false;
+  if(pending){pending=false;setTimeout(writeRemote,3000)}
+}
+let ngBase=null,ngDirty=new Set(),ngWriting=false,ngTimer=null;
+function saveNG(ranks){
+  try{localStorage.setItem("eq-ngsl",JSON.stringify(NG))}catch(e){}
+  if(!ngBase)return;ranks.forEach(r=>ngDirty.add(Math.floor((r-1)/500)));clearTimeout(ngTimer);ngTimer=setTimeout(writeNG,1500);
+}
+async function writeNG(){
+  if(ngWriting||!ngBase)return;ngWriting=true;
+  while(ngDirty.size){const k=[...ngDirty][0];ngDirty.delete(k);const d={};for(let r=k*500+1;r<=k*500+500;r++)if(NG[r])d[r]=NG[r];
+    try{await ngBase.collection("data/users/"+ngBase.uid).doc("ngsl"+k).set({d})}catch(e){if(e&&e.code==="invalid_argument"){ngBase=null;break}}}
+  ngWriting=false;
+}
+async function loadNG(db,uid){
+  try{const snaps=await Promise.all([0,1,2,3,4,5].map(k=>db.collection("data/users/"+uid).doc("ngsl"+k).get()));
+    let changed=false;snaps.forEach(s=>{if(s.exists){const d=(s.data()||{}).d||{};for(const r in d)if(!NG[r]&&Array.isArray(d[r])){NG[r]=d[r];changed=true}}});
+    if(changed){applyNG();try{localStorage.setItem("eq-ngsl",JSON.stringify(NG))}catch(e){}}
+  }catch(e){}
+}
+let CAP={db:null,user:null,tts:null,dict:null,sample:null};
+function makeDict(){
+  const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return null;
+  let rec=null;const h={p:()=>{},f:()=>{},s:()=>{}};
+  return{
+    onPartial(fn){h.p=fn},onFinal(fn){h.f=fn},onState(fn){h.s=fn},
+    start(){return new Promise((res,rej)=>{try{
+      rec=new R();rec.lang="en-US";rec.interimResults=true;rec.continuous=true;
+      rec.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)h.f({text:r[0].transcript.trim()});else interim+=r[0].transcript}h.p({text:interim.trim()})};
+      rec.onstart=()=>{h.s({state:"listening"});res()};
+      rec.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed")rej({code:"not_granted"})};
+      rec.onend=()=>h.s({state:"idle",reason:"stopped"});
+      rec.start()}catch(err){rej(err)}})},
+    stop(){return new Promise(res=>{if(!rec)return res();const old=rec.onend;rec.onend=()=>{old&&old();res()};try{rec.stop()}catch(e){res()}})}
+  };
+}
+async function api(method,body){
+  const pass=localStorage.getItem("eq-pass")||"";
+  const r=await fetch("/api/state",{method,headers:{"x-pass":pass,"content-type":"application/json"},body});
+  if(r.status===401)throw{code:"unauthorized"};
+  if(!r.ok)throw{code:"unavailable"};
+  return r.json();
+}
+function applyNotes(){NG_CARDS.forEach(c=>{c.meaning=S.ngNotes&&S.ngNotes[c.rank]||""})}
+async function connectRemote(){
+  let pass="";try{pass=localStorage.getItem("eq-pass")||""}catch(e){}
+  if(!pass){remoteRef=null;setSave("Chỉ lưu trên trình duyệt này · đặt mật khẩu đồng bộ trong Cài đặt");return}
+  setSave("Đang tải tiến độ…");
+  try{
+    const r=await api("GET");
+    remoteRef={set:d=>api("PUT",JSON.stringify(d))};
+    if(r&&r.updatedAt){
+      if(r.updatedAt>(S.updatedAt||0)){S=Object.assign(defState(),r);try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){};applyNotes();render()}
+      else if((S.updatedAt||0)>r.updatedAt)writeRemote();
+    }else if(S.updatedAt)writeRemote();
+    setSave("Đã đồng bộ với Cloudflare");
+  }catch(e){remoteRef=null;setSave(e&&e.code==="unauthorized"?"Sai mật khẩu đồng bộ — kiểm tra trong Cài đặt":"Chưa kết nối được máy chủ — đang lưu trên trình duyệt")}
+}
+async function initCaps(){
+  CAP.dict=makeDict();
+  if(CAP.dict){CAP.dict.onPartial(({text})=>dictBus("partial",text));CAP.dict.onFinal(({text})=>dictBus("final",text));CAP.dict.onState(({state,reason})=>dictBus("state",state,reason))}
+  render();
+  connectRemote();
+}
+
+/* ================= DERIVED ================= */
+const IT_CARDS=CARDS_RAW.map((c,i)=>({id:"b"+i,word:c[0],sentence:c[1],meaning:c[2],tags:(c[3]||"").split(/\s+/).filter(Boolean)}));
+const NG_CARDS=NGSL_RAW.map((w,i)=>({id:"n"+(i+1),rank:i+1,word:w,tags:["ngsl"],ng:true,sentence:"",meaning:""}));
+let NG={};
+const mdBold=h=>h.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+function applyNG(){for(const r in NG){const c=NG_CARDS[r-1];if(c&&NG[r]){c.sentence=mdBold(esc(NG[r][0]));c.meaning=NG[r][1]}}}
+function customCards(){return S.custom.map(c=>({...c,sentence:boldWord(esc(c.sentence),c.word)}))}
+function allCards(){return IT_CARDS.concat(customCards(),NG_CARDS)}
+const isKnown=r=>S.ngKnown.charCodeAt(r-1)===49;
+function setKnown(r,v){let s=S.ngKnown;if(s.length<NGSL_RAW.length)s=s.padEnd(NGSL_RAW.length,"0");S.ngKnown=s.slice(0,r-1)+(v?"1":"0")+s.slice(r)}
+function ngKnownCount(){let n=0;for(let i=0;i<S.ngKnown.length;i++)if(S.ngKnown.charCodeAt(i)===49)n++;return n}
+function ngCount(){return ngKnownCount()+NG_CARDS.filter(c=>!isKnown(c.rank)&&S.cards[c.id]&&S.cards[c.id].reps>0).length}
+function ngRatio(){if(S.ngRatio!=null)return S.ngRatio;let b={A:.9,B:.7,C:.3}[S.level]??.7;if(curWeek()>=5)b-=.2;return Math.max(0,Math.min(1,b))}
+const sentOf=c=>c.sentence||("<b>"+esc(c.word)+"</b>");
+function boldWord(html,word){if(!word)return html;const w=esc(word).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");const re=new RegExp("("+w+")","i");return re.test(html)?html.replace(re,"<b>$1</b>"):html}
+const learnedCount=()=>Object.values(S.cards).filter(c=>c.reps>0||c.ivl>0).length;
+function curWeek(){if(!S.startDate)return 0;return Math.floor(diffDays(S.startDate,today())/7)+1}
+function phaseOf(w){if(w<1)w=1;return PHASES[Math.floor(((w-1)%12)/2)]}
+function steps(){return S.busy?STEPS_BUSY:STEPS_FULL}
+function totalSteps(){return Object.values(S.days).reduce((a,d)=>a+Object.keys(d.t||{}).length,0)}
+function activeDay(d){const x=S.days[d];return !!(x&&x.t&&Object.keys(x.t).length)}
+function streak(){let d=today(),n=0;if(!activeDay(d))d=addDays(d,-1);while(activeDay(d)){n++;d=addDays(d,-1)}return n}
+function level(xp){let l=1,need=100,acc=0;while(xp>=acc+need){acc+=need;l++;need=100+ (l-1)*50}return{l,cur:xp-acc,need}}
+const goalXP=()=>S.busy?60:120;
+function dueCards(){const t=today();return allCards().filter(c=>S.cards[c.id]&&S.cards[c.id].due<=t)}
+function newLeft(){return Math.max(0,S.newPerDay-day().newDone)}
+function newPool(){
+  const focus=phaseOf(curWeek()).tags;
+  const fresh=IT_CARDS.concat(customCards()).filter(c=>!S.cards[c.id]);
+  const it=fresh.filter(c=>c.tags.some(t=>focus.includes(t))).concat(fresh.filter(c=>!c.tags.some(t=>focus.includes(t))));
+  const ng=NG_CARDS.filter(c=>!S.cards[c.id]&&!isKnown(c.rank));
+  const ratio=ngRatio();const out=[];let a=0,i=0,j=0;
+  while(i<it.length||j<ng.length){a+=ratio;if((a>=1&&j<ng.length)||i>=it.length){out.push(ng[j++]);a-=1}else out.push(it[i++]);if(out.length>=200)break}
+  return out;
+}
+
+/* ================= SOUND / FX ================= */
+let AC=null;
+function tone(seq){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();let t=AC.currentTime;seq.forEach(([f,d,type])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02);t+=d*.75})}catch(e){}}
+const SFX={
+  ok:()=>tone([[880,.09],[1320,.14]]),
+  soft:()=>tone([[520,.1,"triangle"]]),
+  bad:()=>tone([[300,.14,"triangle"],[240,.18,"triangle"]]),
+  step:()=>tone([[523,.1],[659,.1],[784,.1],[1047,.22]]),
+  big:()=>tone([[523,.12],[659,.12],[784,.12],[1047,.12],[784,.1],[1047,.35,"triangle"]]),
+  combo:()=>tone([[988,.07],[1319,.07],[1760,.16]])
+};
+const cv=$("#confetti"),cx=cv.getContext("2d");let parts=[],raf=null;
+function confetti(n=140){
+  cv.width=innerWidth;cv.height=innerHeight;
+  const cols=["#7C5CFF","#FFB020","#22C55E","#2DB7F5","#FF6B2C","#F43F5E"];
+  for(let i=0;i<n;i++)parts.push({x:innerWidth/2+(Math.random()-.5)*120,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*13-4,s:Math.random()*8+5,c:cols[i%cols.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0});
+  if(!raf)loop();
+}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;p.life++;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66);cx.restore()});parts=parts.filter(p=>p.y<cv.height+40&&p.life<260);raf=parts.length?requestAnimationFrame(loop):(cx.clearRect(0,0,cv.width,cv.height),null)}
+function floatXP(n,el){const r=el&&el.getBoundingClientRect?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0};const f=document.createElement("div");f.className="float";f.textContent="+"+n+" XP";f.style.left=(r.left+r.width/2-30)+"px";f.style.top=(r.top-10)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1000)}
+function toast(msg,ms=2200){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),ms)}
+function modal(html,cls=""){closeModal();const o=document.createElement("div");o.className="ov";o.id="ov";o.innerHTML='<div class="modal '+cls+'">'+html+'</div>';o.addEventListener("click",e=>{if(e.target===o&&!o.dataset.lock)closeModal()});document.body.appendChild(o);return o}
+function closeModal(){const o=$("#ov");if(o)o.remove()}
+
+/* ================= XP / PROGRESS ================= */
+function addXP(n,el){
+  const before=level(S.xp).l;S.xp+=n;day().xp+=n;
+  if(el!==false)floatXP(n,el);
+  const after=level(S.xp).l;
+  updateHeader();save();
+  if(after>before)setTimeout(()=>{SFX.big();confetti(180);modal('<div class="big">🎉</div><h2>Lên cấp '+after+'!</h2><p class="muted">Bạn đã tích lũy '+S.xp+' XP. Cứ giữ nhịp này nhé.</p><button class="btn block" data-act="close">Tuyệt vời</button>')},400);
+}
+function checkBadges(){
+  const st=streak();if(st>S.bestStreak)S.bestStreak=st;
+  const fresh=[];BADGES.forEach(b=>{if(!S.badges[b[0]]&&b[4](S)){S.badges[b[0]]=today();fresh.push(b)}});
+  if(fresh.length){save();setTimeout(()=>{const b=fresh[0];SFX.big();confetti(120);modal('<div class="badge" style="font-size:14px"><div class="b" style="width:96px;height:96px;font-size:48px">'+b[1]+'</div></div><h2>Huy hiệu mới!</h2><p><b>'+esc(b[2])+'</b><br><span class="muted">'+esc(b[3])+'</span></p><button class="btn gold block" data-act="close">Nhận huy hiệu</button>')},900)}
+}
+function completeStep(key){
+  const d=day();if(d.t[key])return;
+  d.t[key]=1;
+  const st=streak();if(st>S.bestStreak)S.bestStreak=st;
+  addXP(20,false);SFX.step();confetti(110);
+  const list=steps();const next=list.find(k=>!d.t[k]);
+  const allDone=list.every(k=>d.t[k]);
+  const info=STEP_INFO[key];
+  let html='<div class="big">'+(allDone?"🏆":"✅")+'</div><h2>Xong bước '+esc(info.t)+'!</h2><div class="xpgain">+20 XP</div>';
+  if(st>0)html+='<p class="muted">🔥 Chuỗi '+st+' ngày</p>';
+  if(allDone)html+='<p>Bạn đã xong toàn bộ bài hôm nay. Mở rương thưởng ở trang chủ nhé!</p><button class="btn gold block" data-act="go" data-r="today">Mở rương 🎁</button>';
+  else html+='<button class="btn block" data-act="gostep" data-k="'+next+'">Tiếp: '+esc(STEP_INFO[next].t)+' →</button><div style="height:10px"></div><button class="btn ghost block" data-act="go" data-r="today">Về trang chủ</button>';
+  modal(html);
+  checkBadges();updateHeader();
+}
+
+/* ================= SPEECH ================= */
+let speaking=false;
+function voiceFor(sp){return sp==="B"?"airy":S.voice}
+async function speak(text,opts={}){
+  const rate=opts.rate||S.rate;
+  if(CAP.tts){try{await CAP.tts.speak(text,{rate,voice:opts.voice||S.voice,language:"en"});return}catch(e){if(e&&e.code==="not_granted")CAP.tts=null;else if(e&&e.code==="busy"){toast("Đang nghe mic — dừng mic rồi bấm lại");return}else return}}
+  if("speechSynthesis" in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=rate;const v=speechSynthesis.getVoices().find(v=>/en[-_]US/i.test(v.lang))||speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}
+  else toast("Thiết bị này không hỗ trợ đọc to");
+}
+async function speakLines(lines,onLine){
+  if(CAP.tts){try{if(onLine)CAP.tts.onLine(({id})=>onLine(Number(id)));await CAP.tts.speak(lines.map((l,i)=>({text:l.text,voice:voiceFor(l.speaker),id:String(i)})),{rate:S.rate,language:"en"})}catch(e){}return}
+  if("speechSynthesis" in window){speechSynthesis.cancel();lines.forEach((l,i)=>{const u=new SpeechSynthesisUtterance(l.text);u.lang="en-US";u.rate=S.rate;u.onstart=()=>onLine&&onLine(i);speechSynthesis.speak(u)})}
+}
+function stopSpeak(){try{CAP.tts&&CAP.tts.stop()}catch(e){};try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
+
+/* dictation bus */
+let dictTarget=null,dictOn=false,dictBuf="",dictPartial="";
+function dictBus(kind,text,reason){
+  if(kind==="state"){dictOn=text==="listening";updateMicUI();if(!dictOn&&dictTarget)dictDone();return}
+  if(kind==="partial"){dictPartial=text}
+  if(kind==="final"){dictBuf=(dictBuf+" "+text).trim();dictPartial=""}
+  const el=document.getElementById("dictLive");if(el)el.textContent=(dictBuf+" "+dictPartial).trim()||"…";
+}
+function micStart(target){
+  if(!CAP.dict){toast("Trình duyệt này chưa hỗ trợ mic — hãy dùng Chrome/Edge hoặc gõ thay");return}
+  if(dictOn){CAP.dict.stop().catch(()=>{});return}
+  stopSpeak();dictTarget=target;dictBuf="";dictPartial="";
+  CAP.dict.start().catch(e=>{if(e&&e.code==="not_granted"){CAP.dict=null;toast("Bạn chưa cho phép mic — có thể gõ thay");render()}});
+}
+function updateMicUI(){document.querySelectorAll(".mic").forEach(m=>m.classList.toggle("on",dictOn))}
+function dictDone(){const text=(dictBuf+" "+dictPartial).trim();const t=dictTarget;dictTarget=null;if(!text)return;if(t==="shadow")shadowCheck(text);if(t==="talk"){const i=$("#talkIn");if(i)i.value=((i.value?i.value+" ":"")+text).trim()}}
+
+/* ================= ROUTER ================= */
+const ROUTES=[["today","Hôm nay","home"],["cards","Từ vựng","book"],["listen","Nghe","ear"],["speak","Nói","mic"],["progress","Tiến độ","chart"]];
+function route(){const h=location.hash.replace("#","");return ["today","cards","listen","speak","progress","read"].includes(h)?h:"today"}
+function go(r){if(location.hash!=="#"+r)location.hash=r;else render()}
+addEventListener("hashchange",()=>{stopSpeak();render();scrollTo(0,0)});
+
+function updateHeader(){
+  const st=streak();const h=$("#hStreak");h.querySelector("b").textContent=st;h.classList.toggle("off",!activeDay(today()));
+  $("#hXp").querySelector("b").textContent=S.xp;
+  const p=Math.min(1,day().xp/goalXP());const C=2*Math.PI*15;
+  $("#hRing").innerHTML='<svg width="38" height="38"><circle cx="19" cy="19" r="15" stroke="#E6E2F7" stroke-width="5" fill="none"/><circle cx="19" cy="19" r="15" stroke="'+(p>=1?"#FFB020":"#22C55E")+'" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-p))+'"/></svg><span>'+Math.round(p*100)+'%</span>';
+}
+function renderNav(){const r=route()==="read"?"today":route();$("#nav").innerHTML=ROUTES.map(([k,t,i])=>'<a href="#'+k+'" class="'+(k===r?"on":"")+'">'+ICONS[i]+t+'</a>').join("")}
+function render(){
+  renderNav();updateHeader();
+  const r=route();const v=$("#view");
+  if(r!=="listen")parkMedia();
+  if(!S.startDate&&r==="today"){v.innerHTML=viewOnboard();return}
+  v.innerHTML=({today:viewToday,cards:viewCards,listen:viewListen,speak:viewSpeak,progress:viewProgress,read:viewRead})[r]();
+  if(r==="listen")mountMedia();
+}
+
+/* ================= VIEWS: ONBOARD / TODAY ================= */
+function viewOnboard(){
+  return '<div class="card hero" style="margin-top:18px"><div class="wk">Chào mừng đến English Quest</div><h2>Lộ trình 12 tuần, mỗi ngày một chặng nhỏ</h2><p style="margin:0;opacity:.95">Mở app là biết hôm nay cần làm gì. Làm xong mỗi bước được XP, giữ chuỗi ngày để mở huy hiệu.</p></div>'+
+  '<div class="card"><h3>1. Trình độ hiện tại</h3><p class="muted small">Chưa biết thì làm bài đo vốn từ 10 phút tại <a href="https://my.vocabularysize.com/" target="_blank" rel="noopener">VocabularySize.com</a> (có tiếng Việt).</p>'+
+  '<div class="seg" id="obLevel">'+["A","B","C"].map(l=>'<button data-act="oblevel" data-l="'+l+'" class="'+(S.level===l?"on":"")+'">'+({A:"A · Nền tảng",B:"B · Trung cấp",C:"C · Khá"})[l]+'</button>').join("")+'</div>'+
+  '<p class="muted small" style="margin-top:8px">A: dưới 3.000 từ · B: 3.000–6.000 · C: trên 6.000</p>'+
+  '<h3 style="margin-top:16px">2. Ngày bắt đầu</h3><input type="date" id="obDate" value="'+today()+'">'+
+  '<h3 style="margin-top:16px">3. Số thẻ mới mỗi ngày</h3><div class="seg">'+[5,10,15].map(n=>'<button data-act="obnew" data-n="'+n+'" class="'+(S.newPerDay===n?"on":"")+'">'+n+' thẻ</button>').join("")+'</div>'+
+  '<h3 style="margin-top:16px">4. Đồng bộ giữa các máy (tùy chọn)</h3><input type="text" id="obPass" autocomplete="off" placeholder="Mật khẩu đồng bộ (APP_PASSWORD) — để trống nếu chỉ dùng 1 máy">'+
+  '<div style="height:18px"></div><button class="btn green block" data-act="obstart">Bắt đầu hành trình</button></div>';
+}
+function stepSub(k){
+  const d=day();
+  if(k==="vocab"){const due=dueCards().length,nl=Math.min(newLeft(),newPool().length);return d.t.vocab?"Đã ôn xong hôm nay":(due+" thẻ đến hạn · "+nl+" thẻ mới")}
+  if(k==="listen")return "Nghe 1 bài trong danh sách đủ 3 lượt (chủ đề tuần này)";
+  if(k==="read")return phaseOf(curWeek()).read;
+  if(k==="shadow")return "Nói đuổi 5 câu, app chấm độ khớp";
+  if(k==="speak")return "Trả lời 4 câu hỏi: "+SCEN[phaseOf(curWeek()).scen].name;
+}
+function viewToday(){
+  const w=curWeek(),ph=phaseOf(w),d=day(),list=steps();
+  const lv=level(S.xp);
+  const next=list.find(k=>!d.t[k]);
+  const doneN=list.filter(k=>d.t[k]).length;
+  let h='<div class="card hero" style="margin-top:18px"><div class="wk">'+(w>12?"Sau lộ trình · Tuần "+w:"Tuần "+w+"/12")+' · '+esc(w>=1&&w<=12?PLAN[w-1][0]:"Ôn luyện tự do")+'</div><h2>'+(doneN===list.length?"Hôm nay xong rồi! 🎉":next?"Hôm nay: "+(list.length-doneN)+" chặng nữa":"")+'</h2><span class="topic">Chủ đề: '+esc(ph.name)+'</span>'+
+  '<div class="lvl"><b>Cấp '+lv.l+'</b><div class="bar"><i style="width:'+(lv.cur/lv.need*100)+'%"></i></div><b>'+lv.cur+'/'+lv.need+'</b></div>'+
+  '<svg class="bot" viewBox="0 0 120 120"><rect x="18" y="30" width="84" height="70" rx="26" fill="rgba(255,255,255,.25)"/><circle cx="46" cy="62" r="9" fill="#fff"/><circle cx="74" cy="62" r="9" fill="#fff"/><circle cx="48" cy="64" r="4" fill="#1F1B3A"/><circle cx="76" cy="64" r="4" fill="#1F1B3A"/><path d="M48 80q12 9 24 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="56" y="14" width="8" height="18" rx="4" fill="#FFB020"/></svg></div>';
+  h+='<div class="seg"><button data-act="busy" data-v="0" class="'+(!S.busy?"on":"")+'">Bản đầy đủ ~55 phút</button><button data-act="busy" data-v="1" class="'+(S.busy?"on":"")+'">Ngày bận ~20 phút</button></div>';
+  h+='<div class="path" style="margin-top:34px">';
+  list.forEach(k=>{const inf=STEP_INFO[k];const done=!!d.t[k];const isNext=k===next;
+    h+='<div class="node '+(done?"done":isNext?"next":"")+'">'+(isNext?'<div class="start-tag">BẮT ĐẦU</div>':'')+'<button class="bubble" data-act="gostep" data-k="'+k+'" aria-label="'+esc(inf.t)+'">'+(done?ICONS.check:ICONS[inf.icon])+'</button><div class="ninfo" data-act="gostep" data-k="'+k+'"><div class="t">'+esc(inf.t)+' · '+inf.min+' phút</div><div class="s">'+esc(stepSub(k))+'</div><div class="x">'+(done?"✓ Hoàn thành +20 XP":"+20 XP")+'</div></div></div>'});
+  h+='</div>';
+  const all=doneN===list.length;const opened=d.chest;
+  h+='<div class="chest '+(opened?"":all?"open":"locked")+'"><div data-act="chest">'+CHEST_SVG+'</div><div class="muted small">'+(opened?"Đã mở rương hôm nay · +"+d.chest+" XP":all?"Bấm để mở rương!":"Xong hết các chặng để mở rương thưởng")+'</div></div>';
+  if(new Date().getDay()===0)h+='<div class="card"><h3>📋 Tự chấm cuối tuần</h3><p class="muted small">Tuần này: '+weekActiveDays(w)+'/7 ngày có học. Mục tiêu tuần: '+esc(w>=1&&w<=12?PLAN[w-1][2]:"tự đặt")+'. Ghi lại bạn nghe hiểu khoảng bao nhiêu % và điều gì khó nhất.</p></div>';
+  return h;
+}
+function weekActiveDays(w){if(!S.startDate)return 0;let n=0;const s=addDays(S.startDate,(w-1)*7);for(let i=0;i<7;i++)if(activeDay(addDays(s,i)))n++;return n}
+function viewRead(){
+  const ph=phaseOf(curWeek()),d=day();
+  const sug={A:"Oxford Bookworms / Penguin Readers cấp 1–3 (sách đọc phân cấp)",B:"Graded readers cấp 4–6, hoặc trang Get started của docs Flutter/Android",C:"Docs đầy đủ, blog kỹ thuật, bài trên daily.dev, issue/PR GitHub"}[S.level];
+  return '<div class="card" style="margin-top:18px"><h2>📖 Đọc rộng 10 phút</h2><p class="muted">Đọc liền mạch, đọc để hiểu ý, không tra từng từ. Nếu cứ khoảng 20 từ lại gặp một từ lạ thì bài đó quá khó, hãy đổi bài dễ hơn.</p>'+
+  '<div class="note"><b>Gợi ý tuần này:</b> '+esc(ph.read)+'<br><b>Theo cấp '+S.level+':</b> '+esc(sug)+'</div>'+
+  '<p class="muted small">Gặp câu hay thì vào tab Từ vựng → Thêm thẻ để lưu lại.</p>'+
+  (d.t.read?'<div class="note" style="background:#E8FBEF;border-color:#BDF0CF">✓ Đã xong bước đọc hôm nay</div>':'<button class="btn green block" data-act="readdone">Tôi đã đọc xong 10 phút</button>')+'</div>';
+}
+
+/* ================= NGSL CONTENT (AI) ================= */
+async function ensureContent(list){
+  const miss=list.filter(c=>c.ng&&!NG[c.rank]);
+  if(!miss.length||!CAP.sample)return;
+  for(let i=0;i<miss.length;i+=15){
+    const batch=miss.slice(i,i+15);
+    const prompt="For each English word below, write ONE natural example sentence for a Vietnamese software developer learning English. Level: "+LEVELS[S.level]+". Prefer workplace, technology or daily-life situations that fit the word's MOST COMMON meaning. Keep sentences under 16 words. Wrap the target word, in whatever form it appears in the sentence, in double asterisks, for example **went**. Also give a short Vietnamese meaning for that most common sense, starting with the part of speech in brackets, e.g. \"(đgt) đi\", \"(dt) công ty\", \"(tt) quan trọng\".\nWords: "+batch.map(c=>c.word).join(", ")+"\nReturn ONLY a JSON object: {\"items\":[{\"w\":\"word\",\"s\":\"sentence\",\"m\":\"Vietnamese meaning\"}]}";
+    try{const r=await CAP.sample(prompt,{modelTier:"quick"});const j=parseJSON(r.text);const got=[];
+      (j.items||[]).forEach(it=>{const c=batch.find(b=>b.word.toLowerCase()===String(it.w||"").toLowerCase());if(c&&it.s&&it.m){NG[c.rank]=[String(it.s).slice(0,240),String(it.m).slice(0,120)];got.push(c.rank)}});
+      applyNG();saveNG(got);
+    }catch(e){if(e&&e.code==="not_granted")return}
+  }
+}
+async function startReview(){
+  RV={q:buildQueue(),i:0,show:false,combo:0,best:0,count:0,loading:true};render();
+  await ensureContent(RV.q.slice(0,40));
+  if(RV){RV.loading=false;render()}
+}
+
+/* ================= VIEW: CARDS ================= */
+let RV=null; let CV={tab:"study",q:"",tag:""};
+function buildQueue(){const due=dueCards().sort((a,b)=>S.cards[a.id].due<S.cards[b.id].due?-1:1);const nw=newPool().slice(0,newLeft());const q=[];let i=0,j=0;while(i<due.length||j<nw.length){if(i<due.length)q.push(due[i++]);if(i<due.length)q.push(due[i++]);if(j<nw.length)q.push(nw[j++])}return q}
+function sched(st,g){
+  st=Object.assign({ivl:0,ease:2.5,reps:0,lapses:0},st||{});
+  if(g===0){if(st.reps>0)st.lapses++;st.reps=0;st.ivl=0;st.ease=Math.max(1.3,st.ease-.2);st.due=today();return st}
+  if(g===1){st.ivl=st.reps===0?1:Math.max(1,Math.round(st.ivl*1.2));st.ease=Math.max(1.3,st.ease-.15)}
+  if(g===2){st.ivl=st.reps===0?1:st.reps===1?3:Math.round(Math.max(st.ivl,1)*st.ease)}
+  if(g===3){st.ivl=st.reps===0?3:Math.round(Math.max(st.ivl,1)*st.ease*1.3);st.ease+=.15}
+  st.reps++;st.due=addDays(today(),st.ivl);return st;
+}
+const ivlLabel=n=>n<=0?"<1 phút":n===1?"1 ngày":n<30?n+" ngày":Math.round(n/30)+" tháng";
+function viewCards(){
+  let h='<div class="tabs2">'+[["study","Ôn tập"],["ngsl","3000 từ"],["browse","Danh sách"],["add","Thêm thẻ"]].map(([k,t])=>'<button class="chip '+(CV.tab===k?"on":"")+'" data-act="cvtab" data-t="'+k+'">'+t+'</button>').join("")+'</div>';
+  if(CV.tab==="browse")return h+viewBrowse();
+  if(CV.tab==="add")return h+viewAdd();
+  if(CV.tab==="ngsl")return h+viewNgsl();
+  if(!RV){
+    const due=dueCards().length,nl=Math.min(newLeft(),newPool().length);
+    h+='<div class="card" style="text-align:center"><div style="font-size:54px">📚</div><h2>Ôn từ vựng</h2><p class="muted">Thẻ mới hôm nay: khoảng <b>'+Math.round(ngRatio()*100)+'%</b> từ cơ bản, còn lại là từ IT chủ đề <b>'+esc(phaseOf(curWeek()).tags.join(", "))+'</b></p>'+
+    '<div class="grid4" style="grid-template-columns:repeat(3,1fr);margin:14px 0"><div class="tile"><div class="n" style="color:var(--red)">'+due+'</div><div class="l">Đến hạn</div></div><div class="tile"><div class="n" style="color:var(--sky-d)">'+nl+'</div><div class="l">Thẻ mới</div></div><div class="tile"><div class="n">'+learnedCount()+'</div><div class="l">Thẻ đã học</div></div></div>';
+    if(due+nl>0)h+='<button class="btn green block" data-act="rvstart">Bắt đầu ('+(due+nl)+' thẻ)</button>';
+    else h+='<p>Không còn thẻ nào cho hôm nay. 🎉</p>'+(day().t.vocab?'':'<button class="btn gold block" data-act="rvfinish">Nhận XP bước Từ vựng</button>')+'<div style="height:10px"></div><button class="btn ghost block" data-act="morenew">Học thêm 5 thẻ mới</button>';
+    h+='<p class="muted small" style="margin-top:14px">Cách học: đọc câu, tự nói nghĩa của từ in đậm, rồi mới lật thẻ. Thẻ đúng liên tiếp sẽ tạo combo thưởng XP.</p></div>';
+    return h;
+  }
+  if(RV.loading)return h+'<div class="card" style="text-align:center;padding:40px 18px"><span class="spin"></span><p class="muted">Đang chuẩn bị thẻ…</p></div>';
+  const c=RV.q[RV.i];
+  if(!c){return h+'<div class="card" style="text-align:center"><div style="font-size:60px">🏁</div><h2>Xong phiên ôn!</h2><p class="muted">'+RV.count+' lượt ôn · combo cao nhất '+RV.best+'</p><button class="btn block" data-act="rvend">Tiếp tục</button></div>'}
+  const pct=RV.i/RV.q.length*100;
+  const st=S.cards[c.id];
+  h+='<div class="card"><div class="row"><button class="iconbtn" data-act="rvquit" aria-label="Thoát">✕</button><div class="pbar grow"><i style="width:'+pct+'%"></i></div><span class="muted small">'+(RV.q.length-RV.i)+'</span></div>';
+  h+='<div class="flash"><div class="row" style="justify-content:center;min-height:30px">'+(st?'':'<span class="chip" style="cursor:default;background:#E6F7FF;border-color:#BEE8FC">Thẻ mới</span>')+(RV.combo>=3?'<span class="combo">🔥 Combo x'+RV.combo+'</span>':'')+'</div>'+
+  '<div class="sent">'+sentOf(c)+'</div><div class="row" style="justify-content:center"><button class="speak" data-act="say" aria-label="Nghe">'+ICONS.vol+'</button><button class="speak slow" data-act="sayslow" aria-label="Nghe chậm">'+ICONS.turtle+'</button></div>';
+  if(RV.show)h+='<div class="ans"><div class="w">'+esc(c.word)+'</div>'+(c.ng?'<div class="m">'+(c.meaning?esc(c.meaning):'<span class="muted">Chưa ghi nghĩa</span>')+'</div><div class="row" style="justify-content:center;margin-top:8px"><a class="btn ghost sm" href="https://dictionary.cambridge.org/dictionary/english-vietnamese/'+encodeURIComponent(c.word)+'" target="_blank" rel="noopener">Tra Cambridge ↗</a><a class="btn ghost sm" href="https://youglish.com/pronounce/'+encodeURIComponent(c.word)+'/english" target="_blank" rel="noopener">Nghe người thật ↗</a></div><div class="row" style="margin-top:8px;flex-wrap:nowrap"><input type="text" id="ngNote" placeholder="Tự ghi nghĩa tiếng Việt…" value="'+esc(c.meaning)+'"><button class="btn sm" data-act="ngnote" data-r="'+c.rank+'">Lưu</button></div><div class="small muted" style="margin-top:6px">Từ cơ bản #'+c.rank+'</div>':'<div class="m">'+esc(c.meaning)+'</div>')+'</div>';
+  h+='</div>';
+  if(!RV.show)h+='<button class="btn sky block" data-act="rvshow">Hiện đáp án</button>';
+  else{const g=[0,1,2,3].map(x=>sched(st,x).ivl);h+='<div class="grades"><button class="btn red" data-act="grade" data-g="0">Lại<small>'+ivlLabel(0)+'</small></button><button class="btn gold" data-act="grade" data-g="1">Khó<small>'+ivlLabel(g[1])+'</small></button><button class="btn green" data-act="grade" data-g="2">Được<small>'+ivlLabel(g[2])+'</small></button><button class="btn sky" data-act="grade" data-g="3">Dễ<small>'+ivlLabel(g[3])+'</small></button></div>'}
+  h+='<p class="muted small" style="text-align:center;margin:12px 0 0">'+(c.ng?"3000 từ cơ bản":c.tags.map(esc).join(" · "))+'</p></div>';
+  return h;
+}
+let NS=null;
+function viewNgsl(){
+  const N=NG_CARDS.length,k=ngKnownCount(),l=NG_CARDS.filter(c=>!isKnown(c.rank)&&S.cards[c.id]).length,rest=N-k-l;
+  let h='<div class="card"><h2>🌱 3000 từ cơ bản</h2><p class="muted small">2.809 từ thông dụng nhất (danh sách NGSL), phủ khoảng 92% văn bản tiếng Anh phổ thông. Thẻ mới được lấy lần lượt từ từ phổ biến nhất, bỏ qua những từ bạn đã biết.</p>'+
+  '<div class="pbar" style="display:flex;height:20px"><i style="width:'+(k/N*100)+'%;background:var(--gold);border-radius:0"></i><i style="width:'+(l/N*100)+'%;background:var(--green);border-radius:0"></i></div>'+
+  '<div class="row small" style="margin-top:8px;gap:14px"><span>🟨 Đã biết <b>'+k+'</b></span><span>🟩 Đang học <b>'+l+'</b></span><span class="muted">Còn lại '+rest+'</span></div></div>';
+  h+='<div class="card" id="ngBox">';
+  if(NS){
+    h+='<h3>Bấm vào những từ bạn CHƯA biết</h3><p class="muted small">Từ không bấm sẽ được tính là đã biết và bỏ khỏi hàng học. Chỉ tính là biết nếu bạn nói ngay được nghĩa.</p><div class="row" style="gap:8px;margin:12px 0">'+
+    NS.ranks.map(r=>'<button class="chip ngw '+(NS.unk.has(r)?"unk":"")+'" data-act="ngtoggle" data-r="'+r+'">'+esc(NG_CARDS[r-1].word)+'</button>').join("")+'</div>'+
+    '<div class="row"><button class="btn green grow" data-act="ngconfirm">Xác nhận</button><button class="btn ghost sm" data-act="ngallunk">Chưa biết hết</button><button class="btn ghost sm" data-act="ngcancel">Hủy</button></div>';
+  }else{
+    h+='<h3>Lọc từ đã biết</h3><p class="muted small">Lướt nhanh 20 từ một lần để app không bắt bạn học lại những từ đã thuộc. Đã lọc đến từ #'+S.ngScreened+'. Gặp nhiều lượt liền mà biết gần hết thì cứ lọc tiếp; khi bắt đầu gặp nhiều từ lạ thì dừng lại và học dần.</p>'+
+    '<button class="btn block" data-act="ngstart">Lọc 20 từ tiếp theo (+3 XP)</button>'+(S.ngScreened<500?'<div style="height:10px"></div><button class="btn ghost block sm" data-act="ng500">Tôi chắc chắn biết 500 từ đầu</button>':'');
+  }
+  h+='</div><div class="card"><h3>Tỉ lệ thẻ mới</h3><p class="muted small">Hiện tại khoảng '+Math.round(ngRatio()*100)+'% thẻ mới là từ cơ bản'+(S.ngRatio==null?' (tự động theo cấp độ và tuần)':'')+'.</p><div class="seg">'+[[null,"Tự động"],[1,"100%"],[.7,"70%"],[.5,"50%"],[.3,"30%"]].map(([v,t])=>'<button data-act="ngratio" data-v="'+v+'" class="'+(S.ngRatio===v?"on":"")+'">'+t+'</button>').join("")+'</div></div>';
+  h+='<p class="muted small" style="text-align:center">Danh sách: New General Service List 1.2 — Browne, Culligan &amp; Phillips, giấy phép <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></p>';
+  return h;
+}
+function viewBrowse(){
+  const q=CV.q.toLowerCase();const tags=[...new Set(allCards().flatMap(c=>c.tags))].sort();
+  const list=allCards().filter(c=>(!q||(c.word+" "+c.meaning+" "+stripTags(c.sentence)).toLowerCase().includes(q))&&(!CV.tag||c.tags.includes(CV.tag)));
+  let h='<div class="card"><input type="text" id="bq" placeholder="Tìm từ, nghĩa…" value="'+esc(CV.q)+'"><div class="row" style="margin-top:10px;gap:6px"><button class="chip '+(!CV.tag?"on":"")+'" data-act="btag" data-t="">Tất cả</button>'+tags.map(t=>'<button class="chip '+(CV.tag===t?"on":"")+'" data-act="btag" data-t="'+esc(t)+'">'+esc(t)+'</button>').join("")+'</div></div><div class="card">';
+  const total=list.length;list.splice(150);
+  h+=(total>150?'<p class="muted small">Hiện 150/'+total+' thẻ — gõ để tìm.</p>':'')+list.map(c=>{const st=S.cards[c.id];const lab=!st?'<span class="muted small">Mới</span>':st.due<=today()?'<span class="small" style="color:var(--red)">Đến hạn</span>':'<span class="small" style="color:var(--green-d)">Ôn sau '+ivlLabel(diffDays(today(),st.due))+'</span>';const kn=c.ng&&isKnown(c.rank);return '<div class="li"><div class="grow"><b>'+esc(c.word)+'</b> <span class="muted small">'+(c.meaning?'— '+esc(c.meaning):c.ng?'#'+c.rank:'')+'</span><div class="small muted">'+stripTags(c.sentence)+'</div></div>'+(kn?'<span class="small" style="color:var(--green-d)">Đã biết</span>':lab)+(c.id.startsWith("c")?'<button class="iconbtn" data-act="delcard" data-id="'+c.id+'" aria-label="Xóa">🗑</button>':'')+'</div>'}).join("")||'<p class="muted">Không có thẻ nào.</p>';
+  return h+'</div>';
+}
+function viewAdd(){
+  return '<div class="card"><h3>Thêm thẻ từ câu bạn gặp</h3><p class="muted small">Lấy câu thật từ bài nghe, docs, PR… Câu có ngữ cảnh giúp nhớ lâu hơn từ đứng một mình.</p>'+
+  '<label class="f">Từ / cụm từ</label><input type="text" id="aw" placeholder="ví dụ: race condition">'+
+  '<label class="f">Câu ví dụ (tiếng Anh)</label><textarea id="as" placeholder="We found a race condition in the sync logic."></textarea>'+
+  '<label class="f">Nghĩa tiếng Việt</label><input type="text" id="am" placeholder="lỗi tranh chấp khi nhiều luồng chạy cùng lúc">'+
+  '<label class="f">Tag (cách nhau bằng dấu cách)</label><input type="text" id="at" value="mine">'+
+  '<div style="height:14px"></div><button class="btn green block" data-act="addcard">Thêm thẻ</button></div>';
+}
+
+/* ================= VIEW: LISTEN ================= */
+let LS={tab:"list",open:null};
+let mediaEl=null,mediaA=null,mediaB=null,mediaLoop=false,mediaTimer=null;
+function ytId(u){const m=String(u||"").match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/|live\/)([\w-]{11})/);return m?m[1]:null}
+function viewListen(){
+  let h='<div class="tabs2">'+[["list","Danh sách nghe"],["file","File của bạn"],["sources","Nguồn gợi ý"]].map(([k,t])=>'<button class="chip '+(LS.tab===k?"on":"")+'" data-act="lstab" data-t="'+k+'">'+t+'</button>').join("")+'</div>';
+  if(LS.tab==="file")return h+viewFile();
+  if(LS.tab==="sources")return h+'<div class="card"><h3>Nguồn gợi ý</h3><p class="muted small">Chọn 1 nguồn đúng cấp độ và bám nó vài tuần. Thêm từng tập vào Danh sách nghe để đếm lượt.</p>'+SOURCES.map(s=>'<div class="li"><div class="grow"><a href="'+s[1]+'" target="_blank" rel="noopener">'+s[0]+' ↗</a></div><span class="chip" style="cursor:default">'+s[2]+'</span></div>').join("")+'</div>';
+  return h+viewList();
+}
+function transcriptCard(){
+  return '<div class="card"><h3>Transcript bài đang nghe</h3><p class="muted small">Dán transcript vào đây (trên YouTube: nút … dưới video → Hiện bản chép lời). Lượt 1 đừng xem; lượt 2 đọc theo. Các câu ở đây sẽ được dùng cho Shadowing.</p><textarea id="trans" placeholder="Dán transcript…">'+esc(S.transcript||"")+'</textarea></div>';
+}
+function viewFile(){
+  return '<div class="card"><h2>📁 Nghe file của bạn</h2><p class="muted small">Chọn file audio/video có trên máy (mp3, m4a, mp4…). File chỉ phát trên máy bạn, không tải lên đâu cả.</p><input type="file" id="mfile" accept="audio/*,video/*">'+
+  '<div id="mediaSlot" style="margin-top:12px"></div>'+
+  '<div class="row" style="margin-top:10px"><button class="btn ghost sm" data-act="mback">⟲ 5s</button><button class="btn ghost sm" data-act="mfwd">5s ⟳</button><select id="mrate" style="width:auto">'+[0.75,0.9,1,1.25].map(r=>'<option '+(r===1?"selected":"")+'>'+r+'</option>').join("")+'</select><button class="btn ghost sm" data-act="mA">Đặt A</button><button class="btn ghost sm" data-act="mB">Đặt B</button><button class="btn sm '+(mediaLoop?"gold":"ghost")+'" data-act="mloop">Lặp A–B</button></div>'+
+  '<p class="muted small" id="abinfo">'+abInfo()+'</p>'+
+  '<div style="height:4px"></div>'+(day().t.listen?'<div class="note" style="background:#E8FBEF;border-color:#BDF0CF">✓ Bước Nghe hôm nay đã xong</div>':'<button class="btn green block" data-act="mdone">Tôi đã nghe xong bài này (3 lượt)</button>')+'</div>'+transcriptCard();
+}
+function abInfo(){const f=t=>t==null?"–":Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");return "A: "+f(mediaA)+" · B: "+f(mediaB)+(mediaLoop?" · đang lặp":"")}
+function parkMedia(){if(mediaEl){try{mediaEl.pause()}catch(e){}$("#mediaHome").appendChild(mediaEl)}}
+function mountMedia(){const slot=$("#mediaSlot");if(slot&&mediaEl)slot.appendChild(mediaEl)}
+function viewList(){
+  const ph=phaseOf(curWeek());
+  const items=S.listen.filter(x=>!x.done);const done=S.listen.filter(x=>x.done);
+  let h='<div class="card"><h2>🎧 Danh sách nghe</h2><p class="muted small">Nghe hẹp: bám 1 chủ đề hoặc 1 người nói trong 2–3 tuần, mỗi bài nghe 3 lượt (lượt 1 không phụ đề → lượt 2 có transcript → lượt 3 không phụ đề). Tuần này: <b>'+esc(ph.name)+'</b>. Bấm chấm để đánh dấu từng lượt.</p>'+
+  '<label class="f">Link (YouTube, podcast…)</label><input type="url" id="liU" placeholder="https://www.youtube.com/watch?v=…">'+
+  '<label class="f">Tên bài</label><input type="text" id="liT" placeholder="ví dụ: Flutter state management explained">'+
+  '<div style="height:10px"></div><button class="btn block" data-act="liadd">Thêm vào danh sách</button></div>';
+  h+='<div class="card"><h3>Đang nghe</h3>'+(items.map(x=>{const yid=ytId(x.url);let r='<div class="li" style="flex-wrap:wrap"><div class="grow"><b>'+esc(x.title)+'</b><div class="small muted">'+esc(x.topic)+'</div><div class="row" style="gap:8px;margin-top:4px">'+(yid?'<button class="btn sm '+(LS.open===x.id?"gold":"sky")+'" data-act="liopen" data-id="'+x.id+'">'+(LS.open===x.id?"Thu gọn":"▶ Xem tại đây")+'</button>':'')+(x.url?'<a class="small" href="'+esc(x.url)+'" target="_blank" rel="noopener">Mở link ↗</a>':'')+'<button class="iconbtn small" data-act="lidel" data-id="'+x.id+'" aria-label="Xóa">🗑</button></div></div><span class="dots">'+[0,1,2].map(i=>'<i class="'+(x.passes>i?"on":"")+'" data-act="lipass" data-id="'+x.id+'" title="Lượt '+(i+1)+'"></i>').join("")+'</span>';
+    if(yid&&LS.open===x.id)r+='<div style="width:100%;margin-top:10px;aspect-ratio:16/9"><iframe style="width:100%;height:100%;border:0;border-radius:14px" src="https://www.youtube-nocookie.com/embed/'+yid+'?rel=0&cc_load_policy=0" title="'+esc(x.title)+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><p class="small muted" style="width:100%">Chỉnh tốc độ: bánh răng ⚙ trên video → Tốc độ phát. Bật/tắt phụ đề bằng nút CC.</p>';
+    return r+'</div>'}).join("")||'<p class="muted">Chưa có bài nào. Dán link một video hoặc podcast đúng chủ đề tuần này.</p>')+'</div>';
+  if(done.length)h+='<div class="card"><h3>Đã xong ('+done.length+')</h3>'+done.slice(-8).reverse().map(x=>'<div class="li"><div class="grow">✓ '+esc(x.title)+'</div></div>').join("")+'</div>';
+  return h+transcriptCard();
+}
+
+/* ================= VIEW: SPEAK ================= */
+const PROMPTS={
+  teammate:["Can you introduce yourself and tell me what you do?","How did you become a developer?","What kind of apps have you built?","What do you like most about your job?","What do you usually do on weekends?","What are you learning right now?","What tools do you use every day at work?","What would you like to build in the future?"],
+  standup:["What did you work on yesterday?","What are you going to do today?","Do you have any blockers?","Is your task on track for this sprint?","Who do you need help from this week?","What was the hardest part of your work yesterday?","When do you think you can finish your current ticket?","Is there anything the team should know?"],
+  explain:["Can you explain what the feature you built does?","How did you manage state in this screen?","Which packages did you use, and why?","How does the app handle errors from the API?","How did you test this feature?","What would you improve if you had more time?","How does the app work offline?","Can you explain the folder structure of your project?"],
+  review:["Why did you choose this approach in your pull request?","Can you walk me through the main changes?","How did you find the root cause of the bug?","Did you consider any edge cases?","Is this change backward compatible?","How can we make this code more readable?","What tests did you add?","Do you agree with my comment about naming? Why or why not?"],
+  planning:["How long will this task take, and why?","What are the risks for this sprint?","Which tasks should we prioritize first?","What do you need from the design team?","Can we release this version on Friday?","What should we do if the deadline slips?","How did the last release go?","What did we learn from the last sprint?"],
+  client:["Can you tell me about your experience with mobile apps?","What do you need from me to start the project?","How much would this app cost, roughly?","How long will the first version take?","How will you keep me updated on progress?","What happens if I want to add a feature later?","Why should I choose you instead of another developer?","How do you handle bugs after the app is released?"],
+  interview:["Tell me about yourself.","Why do you want to work here?","What is your biggest strength as a developer?","Tell me about a difficult bug you fixed.","How do you keep your skills up to date?","Describe a project you are proud of.","How do you work with a team that disagrees with you?","Where do you see yourself in three years?"],
+  free:["What did you do today?","What is a piece of tech you love, and why?","What is something new you learned this week?","Describe your city to someone who has never been there.","What is your favorite way to relax after work?","What app do you use the most, and why?","What is a goal you have this year?","What would you do with an extra hour every day?"]
+};
+const STARTERS={
+  teammate:["Hi, I'm … — I work as a … developer.","I've been working on … for about … years.","I really enjoy … because …"],
+  standup:["Yesterday I worked on …","Today I'm going to …","I'm blocked by … / I don't have any blockers."],
+  explain:["Basically, this feature lets users …","For state management, I used … because …","If the request fails, the app …"],
+  review:["I chose this approach because …","The main change here is …","Good point — I'll update it to …"],
+  planning:["I'd estimate about … days, because …","The main risk is …","I think we should prioritize … first."],
+  client:["I've built … apps for …","For the first version, I'd suggest …","I'll send you a progress update every …"],
+  interview:["I'm a mobile developer with … years of experience in …","One project I'm proud of is …","The hardest bug I fixed was …"],
+  free:["To be honest, …","The thing I like most about … is …","Recently, I've been …"]
+};
+let SP={tab:"shadow",list:null,i:0,result:null,typed:false,count:0};
+let TK={i:0};
+function shadowList(){
+  const tr=String(S.transcript||"").replace(/\s+/g," ").split(/(?<=[.!?])\s+/).map(s=>s.trim()).filter(s=>s.split(" ").length>=3&&s.split(" ").length<=30);
+  if(tr.length>=5)return tr;
+  const focus=phaseOf(curWeek()).tags;const pool=IT_CARDS.filter(c=>c.tags.some(t=>focus.includes(t)));
+  return (pool.length?pool:IT_CARDS).map(c=>stripTags(c.sentence)).sort(()=>Math.random()-.5).slice(0,12);
+}
+function viewSpeak(){
+  let h='<div class="tabs2">'+[["shadow","Shadowing"],["talk","Trả lời câu hỏi"]].map(([k,t])=>'<button class="chip '+(SP.tab===k?"on":"")+'" data-act="sptab" data-t="'+k+'">'+t+'</button>').join("")+'</div>';
+  if(!CAP.dict)h+='<div class="note" style="margin-top:12px">Trình duyệt này chưa hỗ trợ nhận giọng nói. Hãy mở bằng Chrome hoặc Edge (máy tính hoặc Android). Tạm thời bạn có thể gõ thay.</div>';
+  return h+(SP.tab==="talk"?viewTalk():viewShadow());
+}
+function viewShadow(){
+  if(!SP.list)SP.list=shadowList();
+  const s=SP.list[SP.i%SP.list.length];const done=day().shadowN||0;
+  let h='<div class="card"><div class="row"><h2 class="grow">🦜 Shadowing</h2><span class="chip" style="cursor:default">Hôm nay '+done+'/5</span></div>'+
+  '<div class="pbar" style="margin:6px 0 4px"><i style="width:'+Math.min(100,done/5*100)+'%"></i></div>'+
+  '<p class="muted small">Nghe mẫu 1–2 lần, bấm mic rồi nói theo đúng nhịp. App so câu bạn nói với câu mẫu. '+(String(S.transcript||"").length>40?"Câu lấy từ transcript bạn dán ở tab Nghe.":"Câu lấy từ thẻ IT tuần này — dán transcript ở tab Nghe để shadowing đúng bài đang nghe.")+'</p></div>';
+  h+='<div class="card" style="text-align:center"><div class="target" id="shTarget">'+(SP.result?SP.result.html:esc(s))+'</div>'+
+  '<div class="row" style="justify-content:center;margin:16px 0"><button class="speak" data-act="shsay" aria-label="Nghe mẫu">'+ICONS.vol+'</button><button class="speak slow" data-act="shslow" aria-label="Nghe chậm">'+ICONS.turtle+'</button></div>';
+  if(CAP.dict){h+='<button class="mic '+(dictOn?"on":"")+'" data-act="shmic" aria-label="Nói">'+ICONS.mic+'</button><div class="heard" id="dictLive" style="margin-top:10px">'+(dictOn?"Đang nghe…":"Bấm mic để nói, bấm lần nữa để dừng")+'</div>'}
+  else h+='<input type="text" id="shType" placeholder="Gõ lại câu bạn nghe…" style="margin-top:10px"><div style="height:8px"></div><button class="btn sky block" data-act="shcheck">Kiểm tra</button>';
+  if(SP.result)h+='<div class="score" style="color:'+(SP.result.score>=80?"var(--green-d)":SP.result.score>=50?"var(--gold-d)":"var(--red)")+'">'+SP.result.score+'%</div><div class="muted small">'+(SP.result.score>=80?"Rất khớp! +5 XP":SP.result.score>=50?"Khá ổn, thử thêm lần nữa nhé +2 XP":"Nghe chậm lại rồi nói lại nhé +2 XP")+'</div>';
+  h+='<div class="row" style="justify-content:center;margin-top:16px"><button class="btn ghost sm" data-act="shprev">← Câu trước</button><button class="btn sm" data-act="shnext">Câu tiếp →</button></div></div>';
+  return h;
+}
+function norm(s){return s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9' ]+/g," ").split(/\s+/).filter(Boolean)}
+function shadowCheck(said){
+  const target=SP.list[SP.i%SP.list.length];const tw=target.split(/\s+/);const tn=tw.map(w=>norm(w)[0]||"");const sn=norm(said);
+  const m=tn.length,n=sn.length;const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=m-1;i>=0;i--)for(let j=n-1;j>=0;j--)dp[i][j]=tn[i]&&tn[i]===sn[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const hit=new Array(m).fill(false);let i=0,j=0;while(i<m&&j<n){if(tn[i]&&tn[i]===sn[j]){hit[i]=true;i++;j++}else if(dp[i+1][j]>=dp[i][j+1])i++;else j++}
+  const valid=tn.filter(Boolean).length||1;const score=Math.round(hit.filter((h,k)=>h&&tn[k]).length/valid*100);
+  SP.result={score,html:tw.map((w,k)=>'<span class="'+(hit[k]||!tn[k]?"ok":"miss")+'">'+esc(w)+'</span>').join(" ")};
+  const d=day();d.shadowN=(d.shadowN||0)+1;S.stats.shadows++;
+  if(score>=80)SFX.ok();else SFX.soft();
+  render();addXP(score>=80?5:2,$("#shTarget"));
+  if(d.shadowN>=5&&!d.t.shadow)setTimeout(()=>completeStep("shadow"),700);else checkBadges();
+}
+function viewTalk(){
+  const ph=phaseOf(curWeek());const sc=S.talkScen||ph.scen;const qs=PROMPTS[sc];const q=qs[TK.i%qs.length];const n=day().talkN||0;
+  let h='<div class="card"><div class="row"><h2 class="grow">🎤 Trả lời câu hỏi</h2><span class="chip" style="cursor:default">Hôm nay '+Math.min(n,4)+'/4</span></div>'+
+  '<div class="pbar" style="margin:6px 0 8px"><i style="width:'+Math.min(100,n/4*100)+'%"></i></div>'+
+  '<p class="muted small">Mỗi câu nói 30–60 giây (3–5 câu). Sau đó đọc lại phần chữ app nghe được: từ nào bị nghe sai thường là chỗ phát âm cần sửa.</p>'+
+  '<div class="row" style="gap:6px">'+Object.entries(SCEN).map(([k,s])=>'<button class="chip '+(sc===k?"on":"")+'" data-act="tkscen" data-k="'+k+'">'+esc(s.name)+(k===ph.scen?" ⭐":"")+'</button>').join("")+'</div></div>';
+  h+='<div class="card" style="text-align:center"><div class="muted small">Câu hỏi '+((TK.i%qs.length)+1)+'/'+qs.length+'</div><div class="target" style="margin:8px 0">'+esc(q)+'</div>'+
+  '<div class="row" style="justify-content:center;margin:10px 0"><button class="speak" data-act="tksay" aria-label="Nghe câu hỏi">'+ICONS.vol+'</button><button class="speak slow" data-act="tkslow" aria-label="Nghe chậm">'+ICONS.turtle+'</button></div>'+
+  (CAP.dict?'<button class="mic '+(dictOn?"on":"")+'" data-act="tkmic" aria-label="Nói">'+ICONS.mic+'</button><div class="heard" id="dictLive" style="margin-top:10px">'+(dictOn?"Đang nghe…":"Bấm mic để trả lời, bấm lần nữa để dừng")+'</div>':'')+
+  '<textarea id="talkIn" style="margin-top:10px" placeholder="'+(CAP.dict?"Phần app nghe được sẽ hiện ở đây — bạn sửa lại được":"Gõ câu trả lời bằng tiếng Anh…")+'"></textarea>'+
+  '<div style="height:10px"></div><div class="row"><button class="btn green grow" data-act="tkdone">Xong câu này</button><button class="btn ghost sm" data-act="tkskip">Đổi câu</button></div></div>';
+  h+='<div class="card"><h3>Mẫu câu gợi ý</h3>'+STARTERS[sc].map(s=>'<div class="li"><div class="grow">'+esc(s)+'</div><button class="iconbtn" data-act="tkstarter" data-s="'+esc(s.replace(/…/g,""))+'" aria-label="Nghe">🔊</button></div>').join("")+'</div>';
+  return h;
+}
+
+/* ================= VIEW: PROGRESS ================= */
+function viewProgress(){
+  const lv=level(S.xp),w=curWeek();
+  let h='<div class="card hero" style="margin-top:18px"><div class="wk">Hồ sơ của bạn</div><h2>Cấp '+lv.l+' · '+S.xp+' XP</h2><div class="lvl"><div class="bar"><i style="width:'+(lv.cur/lv.need*100)+'%"></i></div><b>'+lv.cur+'/'+lv.need+'</b></div></div>';
+  h+='<div class="grid4"><div class="tile"><div class="n" style="color:var(--flame)">🔥'+streak()+'</div><div class="l">Chuỗi hiện tại (cao nhất '+S.bestStreak+')</div></div><div class="tile"><div class="n">'+ngCount()+'</div><div class="l">Từ cơ bản / '+NGSL_RAW.length+'</div></div><div class="tile"><div class="n">'+S.stats.listens+'</div><div class="l">Bài nghe</div></div><div class="tile"><div class="n">'+S.stats.convos+'</div><div class="l">Cuộc hội thoại</div></div></div>';
+  // heatmap 12 weeks
+  const end=today();
+  let cols='';for(let c=0;c<12;c++){cols+='<div class="col">';for(let r=0;r<7;r++){const dd=addDays(end,-(83-(c*7+r)));const x=S.days[dd];const xp=x?x.xp:0;const lvl=xp<=0?0:xp<30?1:xp<70?2:xp<120?3:4;cols+='<i class="'+(lvl?"l"+lvl:"")+(dd===end?" today":"")+'" title="'+dd+': '+xp+' XP"></i>'}cols+='</div>'}
+  h+='<div class="card"><h3>84 ngày gần nhất</h3><div class="heat">'+cols+'</div><p class="muted small" style="margin:8px 0 0">Ô càng đậm, ngày đó càng nhiều XP.</p></div>';
+  h+='<div class="card"><h3>Huy hiệu ('+Object.keys(S.badges).length+'/'+BADGES.length+')</h3><div class="badges">'+BADGES.map(b=>'<div class="badge '+(S.badges[b[0]]?"":"lock")+'" title="'+esc(b[3])+'"><div class="b">'+b[1]+'</div><div class="nm">'+esc(b[2])+'</div><div class="muted" style="font-size:11px">'+esc(b[3])+'</div></div>').join("")+'</div></div>';
+  h+='<div class="card"><h3>Lộ trình 12 tuần</h3>'+(S.startDate?'<p class="muted small">Bắt đầu '+S.startDate.split("-").reverse().join("/")+'. Đang ở tuần '+w+'.</p>':'')+PLAN.map((p,i)=>{const n=i+1;const cls=n<w?"done":n===w?"cur":"";return '<div class="wkrow '+cls+'"><div class="wkno">'+(n<w?"✓":n)+'</div><div class="grow"><b>'+esc(p[0])+'</b> <span class="muted small">· '+esc(phaseOf(n).name)+'</span><div class="small">'+esc(p[1])+'</div><div class="small muted">🎯 '+esc(p[2])+(S.startDate&&n<=w?' · '+weekActiveDays(n)+'/7 ngày học':'')+'</div></div></div>'}).join("")+'</div>';
+  return h;
+}
+
+/* ================= SETTINGS ================= */
+function openSettings(){
+  modal('<h2>Cài đặt</h2>'+
+  '<label class="f">Ngày bắt đầu lộ trình</label><input type="date" id="stDate" value="'+(S.startDate||today())+'">'+
+  '<label class="f">Cấp độ</label><select id="stLevel">'+["A","B","C"].map(l=>'<option '+(S.level===l?"selected":"")+'>'+l+'</option>').join("")+'</select>'+
+  '<label class="f">Thẻ mới mỗi ngày</label><input type="number" id="stNew" min="0" max="50" value="'+S.newPerDay+'">'+
+  '<label class="f">Tốc độ đọc</label><select id="stRate">'+[0.75,0.9,1,1.15].map(r=>'<option value="'+r+'" '+(S.rate==r?"selected":"")+'>'+r+'x</option>').join("")+'</select>'+
+  (CAP.tts?'<label class="f">Giọng đọc</label><select id="stVoice">'+["buttery","airy","glassy","rounded"].map(v=>'<option '+(S.voice===v?"selected":"")+'>'+v+'</option>').join("")+'</select>':'')+
+  '<label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="stSound" '+(S.sound?"checked":"")+'> Âm thanh hiệu ứng</label>'+
+  '<label class="f">Mật khẩu đồng bộ (giống APP_PASSWORD trên Cloudflare)</label><input type="text" id="stPass" autocomplete="off" value="'+esc((()=>{try{return localStorage.getItem("eq-pass")||""}catch(e){return ""}})())+'" placeholder="Để trống = chỉ lưu trên máy này">'+
+  '<div style="height:12px"></div><button class="btn green block" data-act="stsave">Lưu</button><div style="height:10px"></div>'+
+  '<button class="btn ghost block sm" data-act="backup">Sao chép bản sao lưu</button><label class="f">Khôi phục: dán bản sao lưu vào đây</label><textarea id="stRestore" style="min-height:60px"></textarea><div style="height:8px"></div><button class="btn ghost block sm" data-act="restore">Khôi phục</button>','left');
+}
+
+/* ================= EVENTS ================= */
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]");if(!el)return;const a=el.dataset.act;
+  const H={
+    close:closeModal,
+    settings:openSettings,
+    go:()=>{closeModal();go(el.dataset.r)},
+    gostep:()=>{closeModal();const k=el.dataset.k;if(k==="shadow")SP.tab="shadow";if(k==="speak")SP.tab="talk";if(k==="listen")LS.tab="list";if(k==="vocab")CV.tab="study";go(STEP_INFO[k].route)},
+    oblevel:()=>{S.level=el.dataset.l;render()},
+    obnew:()=>{S.newPerDay=Number(el.dataset.n);render()},
+    obstart:()=>{const p=($("#obPass")&&$("#obPass").value||"").trim();if(p){try{localStorage.setItem("eq-pass",p)}catch(e){}}S.startDate=$("#obDate").value||today();save();if(p)connectRemote();SFX.step();confetti(100);render();toast("Bắt đầu rồi! Mẹo: vào Từ vựng → 3000 từ để lọc những từ bạn đã biết",4000)},
+    busy:()=>{S.busy=el.dataset.v==="1";save();render()},
+    chest:()=>{const d=day();if(d.chest||!steps().every(k=>d.t[k]))return;const bonus=[30,40,50,60,80][Math.floor(Math.random()*5)];d.chest=bonus;addXP(bonus,el);SFX.big();confetti(220);modal('<div class="big">🎁</div><h2>Rương hôm nay!</h2><div class="xpgain">+'+bonus+' XP</div><p class="muted">Hoàn thành ngày '+today().split("-").reverse().join("/")+'. 🔥 Chuỗi '+streak()+' ngày. Hẹn bạn ngày mai!</p><button class="btn gold block" data-act="close">Tuyệt!</button>');render();checkBadges()},
+    readdone:()=>{completeStep("read");render()},
+    speakdone:()=>{completeStep("speak");render()},
+    cvtab:()=>{CV.tab=el.dataset.t;render()},
+    rvstart:startReview,
+    rvshow:()=>{RV.show=true;render()},
+    rvquit:()=>{RV=null;render()},
+    rvend:()=>{RV=null;if(!day().t.vocab&&dueCards().length===0)completeStep("vocab");render()},
+    rvfinish:()=>{completeStep("vocab");render()},
+    morenew:()=>{day().newDone=Math.max(0,day().newDone-5);save();startReview()},
+    ngstart:()=>{const out=[];let r=S.ngScreened+1;while(out.length<20&&r<=NG_CARDS.length){if(!isKnown(r)&&!S.cards["n"+r])out.push(r);r++}if(!out.length){toast("Đã lọc hết danh sách!");return}NS={ranks:out,unk:new Set()};render()},
+    ngtoggle:()=>{const r=Number(el.dataset.r);if(NS.unk.has(r))NS.unk.delete(r);else NS.unk.add(r);el.classList.toggle("unk")},
+    ngallunk:()=>{NS.ranks.forEach(r=>NS.unk.add(r));render()},
+    ngconfirm:()=>{let k=0;NS.ranks.forEach(r=>{if(!NS.unk.has(r)){setKnown(r,1);k++}});S.ngScreened=Math.max(S.ngScreened,NS.ranks[NS.ranks.length-1]);const u=NS.unk.size;NS=null;SFX.ok();render();addXP(3,$("#ngBox"));toast("Biết "+k+" · cần học "+u+" từ");checkBadges()},
+    ngcancel:()=>{NS=null;render()},
+    ng500:()=>{for(let r=1;r<=500;r++)if(!S.cards["n"+r])setKnown(r,1);S.ngScreened=Math.max(S.ngScreened,500);save();render();toast("Đã đánh dấu 500 từ đầu là đã biết");checkBadges()},
+    say:()=>speak(stripTags(sentOf(RV.q[RV.i]))),
+    sayslow:()=>speak(stripTags(sentOf(RV.q[RV.i])),{rate:.75}),
+    grade:()=>{const g=Number(el.dataset.g);const c=RV.q[RV.i];const wasNew=!S.cards[c.id];S.cards[c.id]=sched(S.cards[c.id],g);if(wasNew)day().newDone++;RV.count++;S.stats.reviews++;
+      if(g>=2){RV.combo++;RV.best=Math.max(RV.best,RV.combo);if(RV.combo>S.stats.bestCombo)S.stats.bestCombo=RV.combo}else RV.combo=0;
+      if(g===0){RV.q.splice(Math.min(RV.q.length,RV.i+4),0,c);SFX.bad()}else SFX.ok();
+      const xp=g===0?0:(wasNew?3:2);RV.i++;RV.show=false;render();if(xp)addXP(xp,$(".flash"));else save();
+      if(RV.combo>0&&RV.combo%5===0){SFX.combo();addXP(5,$(".flash"));toast("🔥 Combo x"+RV.combo+"! +5 XP thưởng")}
+      if(RV.i>=RV.q.length&&!day().t.vocab){setTimeout(()=>{RV=null;completeStep("vocab");render()},500)}
+      checkBadges()},
+    btag:()=>{CV.tag=el.dataset.t;render()},
+    ngratio:()=>{const v=el.dataset.v;S.ngRatio=v==="null"?null:Number(v);save();render()},
+    delcard:()=>{S.custom=S.custom.filter(c=>c.id!==el.dataset.id);delete S.cards[el.dataset.id];save();render()},
+    addcard:()=>{const w=$("#aw").value.trim(),s=$("#as").value.trim(),m=$("#am").value.trim();if(!w||!s||!m){toast("Điền đủ từ, câu ví dụ và nghĩa nhé");return}S.custom.push({id:"c"+Date.now().toString(36),word:w,sentence:s,meaning:m,tags:($("#at").value||"mine").split(/\s+/).filter(Boolean)});save();SFX.ok();addXP(2,el);toast("Đã thêm thẻ “"+w+"”");render()},
+    lstab:()=>{LS.tab=el.dataset.t;render()},
+    liopen:()=>{LS.open=LS.open===el.dataset.id?null:el.dataset.id;render()},
+    lidel:()=>{S.listen=S.listen.filter(x=>x.id!==el.dataset.id);save();render()},
+    mback:()=>{if(mediaEl)mediaEl.currentTime=Math.max(0,mediaEl.currentTime-5)},
+    mfwd:()=>{if(mediaEl)mediaEl.currentTime+=5},
+    mA:()=>{if(mediaEl){mediaA=mediaEl.currentTime;$("#abinfo").textContent=abInfo()}},
+    mB:()=>{if(mediaEl){mediaB=mediaEl.currentTime;$("#abinfo").textContent=abInfo()}},
+    mloop:()=>{if(mediaA==null||mediaB==null||mediaB<=mediaA){toast("Đặt điểm A rồi điểm B (B sau A) trước nhé");return}mediaLoop=!mediaLoop;if(mediaLoop&&mediaEl){mediaEl.currentTime=mediaA;mediaEl.play().catch(()=>{})}render()},
+    mdone:()=>{S.stats.listens++;completeStep("listen");render()},
+    liadd:()=>{const u=$("#liU").value.trim();const t=$("#liT").value.trim()||(ytId(u)?"Video YouTube "+ytId(u):"");if(!t){toast("Nhập link hoặc tên bài trước nhé");return}S.listen.push({id:"l"+Date.now().toString(36),title:t,url:/^https?:\/\//.test(u)?u:"",topic:phaseOf(curWeek()).name,passes:0,done:false});save();SFX.ok();render()},
+    lipass:()=>{const x=S.listen.find(x=>x.id===el.dataset.id);if(!x)return;x.passes++;SFX.ok();addXP(5,el);if(x.passes>=3){x.done=true;S.stats.listens++;save();render();if(!day().t.listen)setTimeout(()=>completeStep("listen"),600);else{toast("Xong bài “"+x.title+"” 🎧");checkBadges()}}else{save();render()}},
+    sptab:()=>{SP.tab=el.dataset.t;render()},
+    shsay:()=>speak(SP.list[SP.i%SP.list.length]),
+    shslow:()=>speak(SP.list[SP.i%SP.list.length],{rate:.75}),
+    shmic:()=>micStart("shadow"),
+    shcheck:()=>{const v=$("#shType").value.trim();if(v)shadowCheck(v)},
+    shnext:()=>{SP.i++;SP.result=null;render()},
+    shprev:()=>{SP.i=Math.max(0,SP.i-1);SP.result=null;render()},
+    tkscen:()=>{S.talkScen=el.dataset.k;TK.i=0;save();render()},
+    tksay:()=>{const sc=S.talkScen||phaseOf(curWeek()).scen;speak(PROMPTS[sc][TK.i%PROMPTS[sc].length])},
+    tkslow:()=>{const sc=S.talkScen||phaseOf(curWeek()).scen;speak(PROMPTS[sc][TK.i%PROMPTS[sc].length],{rate:.75})},
+    tkmic:()=>micStart("talk"),
+    tkskip:()=>{TK.i++;render()},
+    tkstarter:()=>speak(el.dataset.s),
+    tkdone:()=>{const v=($("#talkIn")&&$("#talkIn").value||"").trim();const w=v.split(/\s+/).filter(Boolean).length;if(w<3){toast("Nói (hoặc gõ) ít nhất một câu trước nhé");return}
+      const d=day();d.talkN=(d.talkN||0)+1;TK.i++;SFX.ok();render();addXP(w>=25?6:w>=8?4:2,$(".target"));toast(w+" từ · "+(w>=25?"Rất tốt!":w>=8?"Ổn — lần sau thử nói dài hơn":"Hơi ngắn, thử nói 3–5 câu nhé"));
+      if(d.talkN>=4&&!d.t.speak){S.stats.convos++;setTimeout(()=>completeStep("speak"),800)}else checkBadges()},
+    ngnote:()=>{const r=Number(el.dataset.r);const v=($("#ngNote").value||"").trim();if(v)S.ngNotes[r]=v.slice(0,120);else delete S.ngNotes[r];applyNotes();save();toast("Đã lưu nghĩa");render()},
+    stsave:()=>{S.startDate=$("#stDate").value||S.startDate;S.level=$("#stLevel").value;S.newPerDay=Math.max(0,Math.min(50,Number($("#stNew").value)||10));S.rate=Number($("#stRate").value)||1;const v=$("#stVoice");if(v)S.voice=v.value;S.sound=$("#stSound").checked;const np=$("#stPass").value.trim();let op="";try{op=localStorage.getItem("eq-pass")||"";localStorage.setItem("eq-pass",np)}catch(e){}save();closeModal();render();toast("Đã lưu cài đặt");if(np!==op)connectRemote()},
+    backup:()=>{navigator.clipboard.writeText(JSON.stringify(S)).then(()=>toast("Đã sao chép bản sao lưu")).catch(()=>toast("Trình duyệt chặn sao chép"))},
+    restore:()=>{const v=($("#stRestore")&&$("#stRestore").value||"").trim();if(!v)return;try{const o=JSON.parse(v);if(!o||typeof o!=="object"||!o.days)throw 0;S=Object.assign(defState(),o);S.updatedAt=Date.now();applyNotes();save();closeModal();render();toast("Đã khôi phục bản sao lưu")}catch(e){toast("Bản sao lưu không hợp lệ")}}
+  };
+  if(H[a])H[a]();
+});
+document.addEventListener("keydown",e=>{
+  if(route()==="cards"&&RV&&RV.q[RV.i]&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){
+    if(e.key===" "&&!RV.show){e.preventDefault();RV.show=true;render()}
+    else if(RV.show&&["1","2","3","4"].includes(e.key)){const b=document.querySelector('[data-act="grade"][data-g="'+(Number(e.key)-1)+'"]');if(b)b.click()}
+  }
+});
+document.addEventListener("input",e=>{
+  if(e.target.id==="bq"){CV.q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#bq");n.focus();n.setSelectionRange(pos,pos)}
+  if(e.target.id==="trans"){S.transcript=e.target.value.slice(0,20000);SP.list=null;clearTimeout(window._mt);window._mt=setTimeout(save,1500)}
+});
+document.addEventListener("change",e=>{
+  if(e.target.id==="lrate"){S.rate=Number(e.target.value);save()}
+  if(e.target.id==="mrate"&&mediaEl){mediaEl.playbackRate=Number(e.target.value)}
+  if(e.target.id==="mfile"){const f=e.target.files&&e.target.files[0];if(!f)return;if(!mediaEl){mediaEl=document.createElement("video");mediaEl.controls=true;mediaEl.playsInline=true;mediaEl.addEventListener("timeupdate",()=>{if(mediaLoop&&mediaB!=null&&mediaEl.currentTime>=mediaB)mediaEl.currentTime=mediaA})}if(mediaEl.src)URL.revokeObjectURL(mediaEl.src);mediaEl.src=URL.createObjectURL(f);mediaA=mediaB=null;mediaLoop=false;mountMedia();const ab=$("#abinfo");if(ab)ab.textContent=abInfo()}
+});
+
+/* ================= BOOT ================= */
+applyNotes();
+render();
+initCaps();
+</script>
+</body>
+</html>
